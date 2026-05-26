@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-status-bar-style" content="default">
+<title><!-- 改：你的頁面標題 --></title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Helvetica Neue", sans-serif;
+    line-height: 1.7;
+    background: #f8f9fa;
+    color: #333;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 主容器 */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+  }
+
+  /* 頁面標題 */
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 1.9em;
+    font-weight: 700;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 12px;
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+
+  /* 題目卡片 */
+  .question {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  .question h2 {
+    color: #2980b9;
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  .question > p {
+    margin-bottom: 10px;
+    line-height: 1.8;
+  }
+
+  /* 子問題 */
+  .sub-q {
+    color: #2980b9;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  /* 答案區 */
+  .answer {
+    background: #e8f4fc;
+    padding: 14px 18px;
+    border-left: 4px solid #3498db;
+    margin-top: 14px;
+    border-radius: 4px;
+  }
+
+  .answer .step {
+    margin: 10px 0;
+    line-height: 1.8;
+  }
+
+  .answer .step:first-child { margin-top: 0; }
+  .answer .step:last-child { margin-bottom: 0; }
+
+  .answer strong {
+    color: #2c3e50;
+  }
+
+  /* 公式區塊 */
+  .formula {
+    text-align: center;
+    padding: 10px 0;
+    margin: 8px 0;
+    overflow-x: auto;
+  }
+
+  /* 行內數學式 */
+  .math {
+    font-style: italic;
+    font-family: "Cambria Math", "Times New Roman", serif;
+  }
+
+  /* 重點標記 */
+  .em { color: #e74c3c; font-weight: 600; }
+  .ok { color: #27ae60; font-weight: 600; }
+  .blue { color: #2980b9; font-weight: 600; }
+
+  /* 提示 / 說明 */
+  .note {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+
+  .callout {
+    background: #fff9e6;
+    border-left: 4px solid #f5a623;
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
+
+  .callout.danger {
+    background: #fdecea;
+    border-left-color: #e74c3c;
+  }
+
+  .callout.ok {
+    background: #eafaf1;
+    border-left-color: #27ae60;
+  }
+
+  /* 列表 */
+  .question ul, .question ol {
+    margin: 10px 0 10px 1.5em;
+  }
+
+  .question li {
+    margin-bottom: 6px;
+    line-height: 1.7;
+  }
+
+  /* 表格 */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.95em;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+
+  th {
+    background: #f0f4f8;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) { background: #fafbfc; }
+
+  /* SVG 圖示 */
+  .diagram {
+    display: block;
+    margin: 14px auto;
+    max-width: 100%;
+  }
+
+  /* 頁底說明 */
+  .footer-note {
+    text-align: center;
+    color: #95a5a6;
+    font-size: 0.85em;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* 頂部導航（可選） */
+  .top-nav {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .top-nav a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 0.9em;
+    margin: 0 10px;
+  }
+
+  .top-nav a:hover { text-decoration: underline; }
+
+  /* MathJax 渲染後容器微調 */
+  mjx-container {
+    font-size: 1.05em !important;
+  }
+
+  /* 響應式：手機 / 小螢幕 */
+  @media (max-width: 640px) {
+    .container {
+      padding: 16px 14px 32px;
+    }
+    h1 {
+      font-size: 1.5em;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .question {
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .question h2 {
+      font-size: 1.1em;
+    }
+    .answer {
+      padding: 12px 14px;
+    }
+    th, td {
+      padding: 8px;
+      font-size: 0.9em;
+    }
+  }
+
+  /* 列印 */
+  @media print {
+    body {
+      background: white;
+      color: black;
+    }
+    .container {
+      max-width: 100%;
+      padding: 0;
+    }
+    h1 {
+      border-bottom-color: #999;
+      color: #000;
+    }
+    .question {
+      box-shadow: none;
+      border: 1px solid #ddd;
+      page-break-inside: avoid;
+    }
+    .answer {
+      background: #f5f5f5;
+      border-left-color: #666;
+    }
+    .callout {
+      background: #f5f5f5;
+      border-left-color: #999;
+    }
+    .callout.danger { border-left-color: #c0392b; }
+    .callout.ok { border-left-color: #27ae60; }
+    .footer-note { display: none; }
+  }
+</style>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]'], ['$$', '$$']]
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ========================================= -->
+  <!-- 頁面標題（改 h1 即可） -->
+  <!-- ========================================= -->
+  <h1><!-- 填寫：頁面大標題，如 "物理練習題解答" --></h1>
+
+  <!-- ========================================= -->
+  <!-- 範例 1：題目 + 答案區塊 -->
+  <!-- ========================================= -->
+  <!-- 用法：複製 .question 區塊增減 -->
+  <!-- h2 放題號+題目標題，p 放題目描述，.answer 放解析 -->
+  <div class="question">
+    <h2><!-- 填寫：題號 + 題目標題，如 "1. 橡膠球豎直下拋問題" --></h2>
+    <p><!-- 填寫：題目描述文字 --></p>
+
+    <div class="answer">
+      <div class="step">
+        <!-- 填寫：解題步驟與公式 -->
+        <!-- 公式用 \( ... \) 行內，或用 \[ ... \] 獨立一行 -->
+      </div>
+      <div class="step">
+        <!-- 更多步驟... -->
+      </div>
+      <p><strong>答案：</strong><!-- 最終答案 --></p>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 範例 2：題目含子問題 -->
+  <!-- ========================================= -->
+  <div class="question">
+    <h2><!-- 填寫：題號 + 標題 --></h2>
+    <p><!-- 題目前導描述（可選） --></p>
+    <p><span class="sub-q">（1）</span><!-- 第一小問 --></p>
+    <p><span class="sub-q">（2）</span><!-- 第二小問 --></p>
+
+    <div class="answer">
+      <div class="step">
+        <span class="sub-q">（1）</span><!-- 第一小問解析 -->
+      </div>
+      <div class="step">
+        <span class="sub-q">（2）</span><!-- 第二小問解析 -->
+      </div>
+      <p><strong>答案：</strong>（1）<!-- ... -->；（2）<!-- ... --></p>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 範例 3：題目含表格 / 數據 -->
+  <!-- ========================================= -->
+  <div class="question">
+    <h2><!-- 題號 + 標題 --></h2>
+    <p><!-- 題目描述 --></p>
+
+    <!-- 可選：題目中的表格 -->
+    <table>
+      <tr>
+        <th><!-- 表頭 1 --></th>
+        <th><!-- 表頭 2 --></th>
+      </tr>
+      <tr>
+        <td><!-- 數據 --></td>
+        <td><!-- 數據 --></td>
+      </tr>
+    </table>
+
+    <div class="answer">
+      <div class="step"><!-- 解析步驟 --></div>
+      <p><strong>答案：</strong><!-- ... --></p>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 範例 4：題目含 SVG 圖示 -->
+  <!-- ========================================= -->
+  <!-- 全部用內聯 SVG，不使用外部圖片 -->
+  <div class="question">
+    <h2><!-- 題號 + 標題 --></h2>
+    <p><!-- 題目描述 --></p>
+
+    <svg class="diagram" viewBox="0 0 400 200" width="100%" style="max-width:400px;">
+      <!-- 填寫：繪製你的圖形 -->
+      <!-- 常用元素：line（軸）、path（曲線）、circle（點）、text（標籤） -->
+      <!-- 顏色建議：#333（線）、#e74c3c（紅）、#27ae60（綠）、#3498db（藍） -->
+    </svg>
+
+    <div class="answer">
+      <div class="step"><!-- 解析 --></div>
+      <p><strong>答案：</strong><!-- ... --></p>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 範例 5：提示 / 注意事項區塊 -->
+  <!-- ========================================= -->
+  <!-- 非題目內容，可放在題目之間作補充說明 -->
+  <div class="callout">
+    <strong>提示：</strong><!-- 補充說明文字 -->
+  </div>
+
+  <div class="callout danger">
+    <strong>注意：</strong><!-- 常見錯誤或陷阱提醒 -->
+  </div>
+
+  <div class="callout ok">
+    <strong>小結：</strong><!-- 關鍵結論 -->
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 額外題目區（複製上方 .question 區塊增減） -->
+  <!-- ========================================= -->
+
+  <!-- 頁底說明 -->
+  <div class="footer-note">
+    說明：公式由 MathJax 自動渲染，首次載入需連網（之後瀏覽器會快取，可離線使用）。
+  </div>
+
+</div>
+
+</body>
+</html>
