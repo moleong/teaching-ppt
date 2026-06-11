@@ -90,7 +90,9 @@ when_to_use:
 </section>
 ```
 - 答案用 `.blank` 包，內文是答案本身（預設 `color: transparent`）
-- 點擊/Space 後，slide 加 `.revealed` class，`.blank` 顯示答案
+- **單個點擊顯示**：每個 `.blank` 綁定 click 事件，`e.stopPropagation(); this.classList.toggle('show')`，點擊單個填空只顯示該填空答案，不觸發整頁 reveal
+- CSS 需定義 `.blank.show`（與 `.revealed .blank` 共用相同樣式），並給 `.blank` 加 `cursor: pointer`
+- Space/點擊 slide 空白處 仍會整頁 reveal（顯示全部填空），方便課堂統一揭曉
 - 不需 `.answer-box.hidden` — 填空答案直接內嵌在 `.blank` 元素中
 
 ### 5. 題目 + 解析（.question + .callout.ok.hidden）
@@ -122,10 +124,36 @@ when_to_use:
 - 顏色用主色板：`#f5a623`（橙）、`#e94560`（紅）、`#2ecc71`（綠）
 
 ### 7. 公式展示
-- 大公式：`.big-formula`（大標題用）
-- 行內公式：`.formula`（中等）
+- 大公式：`.big-formula`（獨立展示，預設 `calc(3.2vw * var(--fs-scale))`）
+- 行內公式框：`.formula`（嵌入內容中，預設 `calc(2.0vw * var(--fs-scale))`）
+- **字號原則**：公式不宜過大，佔據畫面 1/4–1/3 為宜，留足空間給說明文字
 
-### 8. 總結（.summary-list）
+### 8. 逐步顯示（data-step-reveal）
+```html
+<section class="slide" data-step-reveal="true">
+  <div class="slide-header">
+    <span class="slide-tag">標籤</span>
+    <span class="slide-title">頁標題</span>
+  </div>
+  <div class="reveal-step">
+    <!-- 第一個區塊：問題描述或第一個概念 -->
+  </div>
+  <div class="reveal-step">
+    <!-- 第二個區塊：例子或深入說明 -->
+  </div>
+  <div class="reveal-step">
+    <!-- 第三個區塊：總結或結論 -->
+  </div>
+  <div class="reveal-hint" data-hint>按 空格鍵 / 點擊 逐步揭曉</div>
+</section>
+```
+- 每個 `.reveal-step` 是一個區塊，預設 `opacity: 0`
+- 按 Space 逐一顯示（`.visible` 添加後 `opacity: 1`）
+- 全部顯示後再按 Space 才進入下一頁
+- 離開該頁時自動重置，下次回來需重新揭曉
+- **與 `data-reveal` 的區別**：`data-step-reveal` 是逐步顯示區塊；`data-reveal` 是整頁一次性揭曉
+
+### 9. 總結（.summary-list）
 ```html
 <ul class="summary-list">
   <li><span class="em">關鍵詞</span> 說明</li>
@@ -262,7 +290,7 @@ python assets/upgrade-to-latex.py <html_path> --mapping <mapping.json>
 | 輔色1 | `#e94560`（紅色） | 錯誤、危險、否定 |
 | 輔色2 | `#2ecc71`（綠色） | 正確、確認、提示 |
 | 輔色3 | `#4ecdc4`（青色） | 輔助說明 |
-| 字體單位 | `vw`（視口寬度） | 自適應任何解析度 |
+| 字體單位 | `calc(vw * var(--fs-scale))` | 自適應解析度 + A+/A− 縮放控制 |
 | 文字 | `Microsoft JhengHei` 優先 | 中文最佳顯示 |
 
 ## 互動規範
@@ -281,7 +309,15 @@ python assets/upgrade-to-latex.py <html_path> --mapping <mapping.json>
 | **0** | 字體重置為 100% |
 | **Ctrl + P** | 列印（自動白底 + 分頁 + HUD 與控制組隱藏） |
 
-**關鍵**：**Space / 點擊** 只做「揭曉控制」（toggle 揭曉 ↔ 隱藏）;**前進專鍵**是 → / 右鍵 / 左滑。離開揭曉頁（無論方向）時,該頁自動重置為 fresh 狀態 — 下次回到該頁需要重新揭曉。
+**揭曉模式對照**：
+
+| 模式 | 標記 | Space / 點擊行為 | 適用場景 |
+|------|------|-------------------|----------|
+| 逐步顯示 | `data-step-reveal="true"` | 逐一顯示 `.reveal-step` 區塊，全部顯示後才前進 | 概念講解、分步推導 |
+| 整頁揭曉 | `data-reveal="true"` | toggle 整頁揭曉 ↔ 隱藏 | 填空題、答案統一揭曉 |
+| 無互動 | 無標記 | 直接前進 | 封面、目錄、已完整展示的內容 |
+
+**關鍵**：離開揭曉頁（無論方向）時，該頁自動重置為 fresh 狀態 — 下次回到該頁需要重新揭曉。
 
 ## iPad / 觸控適配
 

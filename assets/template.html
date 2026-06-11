@@ -86,8 +86,9 @@
     display: inline-block; min-width: 8em; padding: 0 0.4em;
     border-bottom: 3px solid #f5a623; color: transparent;
     transition: color 0.4s ease; text-align: center;
+    cursor: pointer;
   }
-  .revealed .blank { color: #f5a623; background: rgba(245, 166, 35, 0.12); border-radius: 4px; }
+  .blank.show, .revealed .blank { color: #f5a623; background: rgba(245, 166, 35, 0.12); border-radius: 4px; }
 
   /* 概念卡片 */
   .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; margin-top: 2vh; }
@@ -117,8 +118,8 @@
   .slide.revealed .callout { max-height: none; }
 
   /* 公式 */
-  .formula { font-family: "Cambria Math", "Latin Modern Math", serif; font-size: calc(2.5vw * var(--fs-scale)); color: #f5a623; text-align: center; margin: 2vh 0; padding: 2vh 0; background: rgba(245,166,35,0.08); border-radius: 8px; }
-  .big-formula { font-size: calc(4.5vw * var(--fs-scale)); font-family: "Cambria Math", "Latin Modern Math", serif; color: #f5a623; text-align: center; margin: 4vh 0; padding: 4vh 4vw; background: rgba(245,166,35,0.08); border: 2px solid rgba(245,166,35,0.3); border-radius: 12px; }
+  .formula { font-family: "Cambria Math", "Latin Modern Math", serif; font-size: calc(2.0vw * var(--fs-scale)); color: #f5a623; text-align: center; margin: 2vh 0; padding: 2vh 0; background: rgba(245,166,35,0.08); border-radius: 8px; }
+  .big-formula { font-size: calc(3.2vw * var(--fs-scale)); font-family: "Cambria Math", "Latin Modern Math", serif; color: #f5a623; text-align: center; margin: 3vh 0; padding: 3vh 3vw; background: rgba(245,166,35,0.08); border: 2px solid rgba(245,166,35,0.3); border-radius: 12px; }
 
   /* 題目區 */
   .question { font-size: calc(1.8vw * var(--fs-scale)); line-height: 1.8; }
@@ -145,6 +146,10 @@
   @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
   .hidden { display: none !important; }
   .invisible { visibility: hidden; }
+  .reveal-step { opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .reveal-step.visible { opacity: 1; transform: translateY(0); }
+
+
 
   /* SVG 圖 */
   .diagram { margin: 2vh auto; display: block; }
@@ -181,7 +186,7 @@
     .content { font-size: calc(3vw * var(--fs-scale)); } .card-grid { grid-template-columns: 1fr; }
     .card-title { font-size: calc(3vw * var(--fs-scale)); } .card-body { font-size: calc(2.7vw * var(--fs-scale)); }
     table { font-size: calc(2.6vw * var(--fs-scale)); } .callout { font-size: calc(2.7vw * var(--fs-scale)); max-height: 70vh; }
-    .formula { font-size: calc(4vw * var(--fs-scale)); } .big-formula { font-size: calc(7vw * var(--fs-scale)); padding: 3vh 3vw; }
+    .formula { font-size: calc(3.2vw * var(--fs-scale)); } .big-formula { font-size: calc(5vw * var(--fs-scale)); padding: 2.5vh 2.5vw; }
     .question { font-size: calc(3vw * var(--fs-scale)); } .toc { font-size: calc(4vw * var(--fs-scale)); } .toc .desc { font-size: calc(2.6vw * var(--fs-scale)); } .summary-list { font-size: calc(2.8vw * var(--fs-scale)); }
     .two-col { grid-template-columns: 1fr; } .two-col-top { grid-template-columns: 1fr 1fr; } .spring-row { grid-template-columns: 1fr; }
     .spring-state .label { font-size: calc(2.6vw * var(--fs-scale)); } .spring-state .desc { font-size: calc(2.2vw * var(--fs-scale)); }
@@ -236,7 +241,7 @@
     .slide { display: flex !important; page-break-after: always; position: relative; background: white !important; color: black; height: 100vh; }
     .hud, .reveal-hint, .ctrl-group, .ios-tip { display: none; }
     .card, .callout, .formula, .big-formula { background: #f5f5f5 !important; color: black; }
-    .blank { color: #d35400; }
+    .blank, .blank.show { color: #d35400; }
   }
 </style>
 </head>
@@ -367,6 +372,33 @@
   </section>
 
   <!-- ========================================= -->
+  <!-- 範例 7：逐步顯示 slide（Space 每下顯示一個區塊） -->
+  <!-- ========================================= -->
+  <!-- 用法：data-step-reveal="true" 啟用逐步顯示 -->
+  <!-- 每個 .reveal-step 是一個區塊，按 Space 逐一顯示 -->
+  <!-- 全部顯示後再按 Space 才進入下一頁 -->
+  <section class="slide" data-step-reveal="true">
+    <div class="slide-header">
+      <span class="slide-tag"><!-- 填寫：標籤 --></span>
+      <span class="slide-title"><!-- 填寫：頁標題 --></span>
+    </div>
+
+    <div class="reveal-step">
+      <!-- 第一個區塊：問題描述或第一個概念 -->
+    </div>
+
+    <div class="reveal-step">
+      <!-- 第二個區塊：例子或深入說明 -->
+    </div>
+
+    <div class="reveal-step">
+      <!-- 第三個區塊：總結或結論 -->
+    </div>
+
+    <div class="reveal-hint" data-hint>按 空格鍵 / 點擊 逐步揭曉</div>
+  </section>
+
+  <!-- ========================================= -->
   <!-- 額外 slide 區（複製上方範例增減） -->
   <!-- ========================================= -->
   <!-- 提示：
@@ -374,6 +406,7 @@
     - 表格 slide：用 <table> + th（標題行）+ td（內容行）
     - 公式 slide：用 .big-formula（大標題級）或 .formula（行內級）
     - 目錄 slide：用 .toc > li 列舉
+    - 逐步顯示 slide：用 data-step-reveal + .reveal-step 包裹每個區塊
   -->
 
 </div>
@@ -446,16 +479,52 @@
     }
   }
 
+  // 逐次展示
+  function advanceStepReveal() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal !== 'true') return false;
+    const steps = slide.querySelectorAll('.reveal-step');
+    for (let i = 0; i < steps.length; i++) {
+      if (!steps[i].classList.contains('visible')) {
+        steps[i].classList.add('visible');
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function resetStepReveal() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true') {
+      slide.querySelectorAll('.reveal-step').forEach(s => s.classList.remove('visible'));
+      const hint = slide.querySelector('[data-hint]');
+      if (hint) hint.classList.remove('hidden');
+    }
+  }
+
   function next() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true' && advanceStepReveal()) return;
     if (isRevealable()) { reveal(); return; }
     advance();
   }
 
-  function skipNext() { advance(); }
+  function skipNext() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true') {
+      const hiddenSteps = slide.querySelectorAll('.reveal-step:not(.visible)');
+      if (hiddenSteps.length > 0) {
+        hiddenSteps[0].classList.add('visible');
+        return;
+      }
+    }
+    advance();
+  }
 
   function advance() {
     if (current < total - 1) {
       resetCurrentReveal();
+      resetStepReveal();
       current++;
       render();
     }
@@ -464,6 +533,7 @@
   function prev() {
     if (current > 0) {
       resetCurrentReveal();
+      resetStepReveal();
       current--;
       render();
     }
@@ -474,6 +544,15 @@
   // 前進專鍵:→ / 右鍵 / 左滑
   function toggleOrNext() {
     const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true') {
+      const hiddenSteps = slide.querySelectorAll('.reveal-step:not(.visible)');
+      if (hiddenSteps.length > 0) {
+        hiddenSteps[0].classList.add('visible');
+        return;
+      }
+      advance();
+      return;
+    }
     if (slide.dataset.reveal === 'true') {
       if (slide.classList.contains('revealed')) {
         resetCurrentReveal();   // 已揭曉 → 隱藏(留在當頁)
@@ -591,6 +670,14 @@
     if (e.target.closest('.hud, .ctrl-group, .ios-tip')) return;
     e.preventDefault();
     skipNext();
+  });
+
+  // 單個填空點擊顯示/隱藏（不影響頁面切換）
+  document.querySelectorAll('.blank').forEach(function(blank) {
+    blank.addEventListener('click', function(e) {
+      e.stopPropagation();
+      this.classList.toggle('show');
+    });
   });
 
   render();

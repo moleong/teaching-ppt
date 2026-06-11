@@ -9,6 +9,8 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  :root { --fs-scale: 1; }
+
   html, body {
     width: 100%;
     height: 100%;
@@ -42,23 +44,23 @@
   /* 封面 */
   .cover { align-items: center; text-align: center; background: linear-gradient(135deg, #0f3460 0%, #16213e 100%); }
   .cover h1 {
-    font-size: 5.5vw; font-weight: 700; margin-bottom: 3vh; letter-spacing: 0.05em;
+    font-size: calc(5.5vw * var(--fs-scale)); font-weight: 700; margin-bottom: 3vh; letter-spacing: 0.05em;
     background: linear-gradient(90deg, #e94560, #f5a623);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .cover .subtitle { font-size: 2.2vw; color: #a0a0c0; margin-bottom: 6vh; }
-  .cover .meta { font-size: 1.4vw; color: #707090; }
+  .cover .subtitle { font-size: calc(2.2vw * var(--fs-scale)); color: #a0a0c0; margin-bottom: 6vh; }
+  .cover .meta { font-size: calc(1.4vw * var(--fs-scale)); color: #707090; }
 
   /* 頁首 */
   .slide-header { display: flex; align-items: center; margin-bottom: 3vh; }
   .slide-tag {
     background: #e94560; color: white; padding: 0.5em 1.3em;
-    border-radius: 4px; font-size: 1.3vw; font-weight: 600; margin-right: 1.5vw;
+    border-radius: 4px; font-size: calc(1.3vw * var(--fs-scale)); font-weight: 600; margin-right: 1.5vw;
   }
-  .slide-title { font-size: 2.2vw; font-weight: 600; }
+  .slide-title { font-size: calc(2.2vw * var(--fs-scale)); font-weight: 600; }
 
   /* 通用內容 */
-  .content { font-size: 1.9vw; line-height: 1.75; }
+  .content { font-size: calc(1.9vw * var(--fs-scale)); line-height: 1.75; }
   .content p { margin-bottom: 1.6vh; }
   .content ul, .content ol { list-style: none; margin: 1vh 0; }
   .content ul li, .content ol li { padding-left: 2vw; text-indent: -2vw; margin-bottom: 1.2vh; }
@@ -78,40 +80,41 @@
     display: inline-block; min-width: 8em; padding: 0 0.4em;
     border-bottom: 3px solid #f5a623; color: transparent;
     transition: color 0.4s ease; text-align: center;
+    cursor: pointer;
   }
-  .revealed .blank { color: #f5a623; background: rgba(245, 166, 35, 0.12); border-radius: 4px; }
+  .blank.show, .revealed .blank { color: #f5a623; background: rgba(245, 166, 35, 0.12); border-radius: 4px; }
 
   /* 概念卡片 */
   .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2vw; margin-top: 2vh; }
   .card { background: rgba(255,255,255,0.05); border-left: 5px solid #f5a623; padding: 2.5vh 2vw; border-radius: 6px; }
   .card.r1 { border-left-color: #e94560; }
   .card.r2 { border-left-color: #2ecc71; }
-  .card-title { font-size: 1.7vw; color: #f5a623; font-weight: 600; margin-bottom: 1.5vh; }
+  .card-title { font-size: calc(1.7vw * var(--fs-scale)); color: #f5a623; font-weight: 600; margin-bottom: 1.5vh; }
   .card.r1 .card-title { color: #e94560; }
   .card.r2 .card-title { color: #2ecc71; }
-  .card-body { font-size: 1.6vw; line-height: 1.7; }
+  .card-body { font-size: calc(1.6vw * var(--fs-scale)); line-height: 1.7; }
 
   /* 表格 */
-  table { width: 100%; border-collapse: collapse; margin-top: 2vh; font-size: 1.6vw; }
+  table { width: 100%; border-collapse: collapse; margin-top: 2vh; font-size: calc(1.6vw * var(--fs-scale)); }
   th, td { padding: 1.5vh 1.5vw; border: 1px solid rgba(255,255,255,0.15); text-align: center; }
   th { background: rgba(233,69,96,0.25); color: #ffb4c1; font-weight: 600; }
   td.label { background: rgba(245,166,35,0.15); color: #f5a623; font-weight: 600; }
 
   /* 提示 / 警示 */
-  .callout { background: rgba(245,166,35,0.1); border-left: 5px solid #f5a623; padding: 2vh 2vw; border-radius: 6px; font-size: 1.6vw; margin-top: 2vh; line-height: 1.7; }
+  .callout { background: rgba(245,166,35,0.1); border-left: 5px solid #f5a623; padding: 2vh 2vw; border-radius: 6px; font-size: calc(1.6vw * var(--fs-scale)); margin-top: 2vh; line-height: 1.7; }
   .callout.danger { background: rgba(233,69,96,0.1); border-left-color: #e94560; }
   .callout.ok     { background: rgba(46,204,113,0.1); border-left-color: #2ecc71; }
   .callout-title  { font-weight: 700; margin-right: 0.5em; }
 
   /* 公式 */
-  .formula { font-family: "Cambria Math", "Latin Modern Math", serif; font-size: 2.5vw; color: #f5a623; text-align: center; margin: 2vh 0; padding: 2vh 0; background: rgba(245,166,35,0.08); border-radius: 8px; }
-  .big-formula { font-size: 4.5vw; font-family: "Cambria Math", "Latin Modern Math", serif; color: #f5a623; text-align: center; margin: 4vh 0; padding: 4vh 4vw; background: rgba(245,166,35,0.08); border: 2px solid rgba(245,166,35,0.3); border-radius: 12px; }
+  .formula { font-family: "Cambria Math", "Latin Modern Math", serif; font-size: calc(2.0vw * var(--fs-scale)); color: #f5a623; text-align: center; margin: 2vh 0; padding: 2vh 0; background: rgba(245,166,35,0.08); border-radius: 8px; }
+  .big-formula { font-size: calc(3.2vw * var(--fs-scale)); font-family: "Cambria Math", "Latin Modern Math", serif; color: #f5a623; text-align: center; margin: 3vh 0; padding: 3vh 3vw; background: rgba(245,166,35,0.08); border: 2px solid rgba(245,166,35,0.3); border-radius: 12px; }
 
   /* 兩欄佈局 */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; align-items: center; margin-top: 2vh; }
 
   /* 揭曉提示 */
-  .reveal-hint { position: absolute; bottom: 10vh; left: 50%; transform: translateX(-50%); color: #707090; font-size: 1.2vw; animation: pulse 1.6s infinite; }
+  .reveal-hint { position: absolute; bottom: 10vh; left: 50%; transform: translateX(-50%); color: #707090; font-size: calc(1.2vw * var(--fs-scale)); animation: pulse 1.6s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
   .hidden { display: none !important; }
   .invisible { visibility: hidden; }
@@ -120,52 +123,100 @@
   .diagram { margin: 2vh auto; display: block; }
 
   /* 目錄 */
-  .toc { list-style: none; font-size: 2.6vw; line-height: 2.4; }
+  .toc { list-style: none; font-size: calc(2.6vw * var(--fs-scale)); line-height: 2.4; }
   .toc li { padding-left: 5vw; text-indent: -5vw; margin-bottom: 1vh; }
   .toc .num { display: inline-block; width: 4vw; color: #e94560; font-weight: 700; }
-  .toc .desc { color: #a0a0c0; font-size: 1.6vw; margin-left: 1em; }
+  .toc .desc { color: #a0a0c0; font-size: calc(1.6vw * var(--fs-scale)); margin-left: 1em; }
 
   /* 總結頁 */
-  .summary-list { list-style: none; font-size: 1.8vw; line-height: 2; }
+  .summary-list { list-style: none; font-size: calc(1.8vw * var(--fs-scale)); line-height: 2; }
   .summary-list li { padding-left: 3vw; position: relative; margin-bottom: 1.5vh; }
   .summary-list li::before { content: "✓"; position: absolute; left: 0; color: #2ecc71; font-weight: bold; }
 
   /* 彈簧示意（可選） */
   .spring-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2vw; margin: 2vh 0; text-align: center; }
   .spring-state { padding: 2vh 1vw; background: rgba(255,255,255,0.04); border-radius: 8px; }
-  .spring-state .label { font-size: 1.5vw; color: #f5a623; margin-bottom: 1vh; font-weight: 600; }
-  .spring-state .desc { font-size: 1.3vw; color: #a0a0c0; margin-top: 1vh; }
+  .spring-state .label { font-size: calc(1.5vw * var(--fs-scale)); color: #f5a623; margin-bottom: 1vh; font-weight: 600; }
+  .spring-state .desc { font-size: calc(1.3vw * var(--fs-scale)); color: #a0a0c0; margin-top: 1vh; }
+
+
+  /* 逐次展示區塊 */
+  .reveal-step { opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .reveal-step.visible { opacity: 1; transform: translateY(0); }
+
+  /* 右上角控制按鈕組（字體縮放 + 全屏） */
+  .ctrl-group {
+    position: fixed; top: 2vh; right: 2vw;
+    display: flex; gap: 0.5vw;
+    z-index: 200;
+  }
+  .ctrl-btn {
+    width: 3.5vw; height: 3.5vw; min-width: 36px; min-height: 36px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #f0f0f0; font-family: inherit;
+    font-size: calc(1.4vw * var(--fs-scale)); font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
+    padding: 0; line-height: 1;
+  }
+  .ctrl-btn:hover { background: rgba(245,166,35,0.3); }
+  .ctrl-btn:active { transform: scale(0.92); }
+  .ctrl-btn svg { width: 55%; height: 55%; fill: #f0f0f0; }
+  .ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .ctrl-btn:disabled:hover { background: rgba(255,255,255,0.08); }
+
+  /* iOS 提示氣泡 */
+  .ios-tip {
+    position: fixed; top: 7vh; right: 2vw;
+    background: rgba(15, 52, 96, 0.95); color: #f0f0f0;
+    padding: 1.8vh 2vw; border-radius: 8px;
+    font-size: calc(1.2vw * var(--fs-scale)); line-height: 1.6; max-width: 30vw;
+    z-index: 199; border-left: 4px solid #f5a623;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    opacity: 0; transform: translateY(-10px); pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .ios-tip.show { opacity: 1; transform: translateY(0); }
+  .ios-tip strong { color: #f5a623; }
+  .ios-tip .close {
+    position: absolute; top: 0.5vh; right: 0.5vw;
+    cursor: pointer; font-size: calc(1.2vw * var(--fs-scale));
+    color: #a0a0c0; padding: 0.3vh 0.5vw;
+  }
+  .ios-tip .close:hover { color: #f0f0f0; }
 
   /* 底部 HUD */
+
   .hud { position: fixed; bottom: 2vh; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 3vw; pointer-events: none; z-index: 100; }
   .progress { flex: 1; height: 3px; background: rgba(255,255,255,0.1); margin: 0 2vw; border-radius: 2px; overflow: hidden; }
   .progress-bar { height: 100%; background: linear-gradient(90deg, #e94560, #f5a623); transition: width 0.3s ease; }
-  .counter { font-size: 1.2vw; color: #707090; min-width: 4em; text-align: center; }
-  .controls-hint { font-size: 1vw; color: #505070; text-align: right; }
+  .counter { font-size: calc(1.2vw * var(--fs-scale)); color: #707090; min-width: 4em; text-align: center; }
+  .controls-hint { font-size: calc(1vw * var(--fs-scale)); color: #505070; text-align: right; }
 
   /* iPad 直向適配 */
   @media (orientation: portrait) {
     .slide { padding: 4vh 6vw; }
-    .cover h1 { font-size: 9vw; } .cover .subtitle { font-size: 3.5vw; } .cover .meta { font-size: 2.4vw; }
-    .slide-tag { font-size: 2.6vw; } .slide-title { font-size: 3.6vw; }
-    .content { font-size: 3vw; } .card-grid { grid-template-columns: 1fr; }
-    .card-title { font-size: 3vw; } .card-body { font-size: 2.7vw; }
-    table { font-size: 2.6vw; } .callout { font-size: 2.7vw; }
-    .formula { font-size: 4vw; } .big-formula { font-size: 7vw; padding: 3vh 3vw; }
-    .toc { font-size: 4vw; } .toc .desc { font-size: 2.6vw; } .summary-list { font-size: 2.8vw; }
+    .cover h1 { font-size: calc(9vw * var(--fs-scale)); } .cover .subtitle { font-size: calc(3.5vw * var(--fs-scale)); } .cover .meta { font-size: calc(2.4vw * var(--fs-scale)); }
+    .slide-tag { font-size: calc(2.6vw * var(--fs-scale)); } .slide-title { font-size: calc(3.6vw * var(--fs-scale)); }
+    .content { font-size: calc(3vw * var(--fs-scale)); } .card-grid { grid-template-columns: 1fr; }
+    .card-title { font-size: calc(3vw * var(--fs-scale)); } .card-body { font-size: calc(2.7vw * var(--fs-scale)); }
+    table { font-size: calc(2.6vw * var(--fs-scale)); } .callout { font-size: calc(2.7vw * var(--fs-scale)); }
+    .formula { font-size: calc(4vw * var(--fs-scale)); } .big-formula { font-size: calc(7vw * var(--fs-scale)); padding: 3vh 3vw; }
+    .toc { font-size: calc(4vw * var(--fs-scale)); } .toc .desc { font-size: calc(2.6vw * var(--fs-scale)); } .summary-list { font-size: calc(2.8vw * var(--fs-scale)); }
     .two-col { grid-template-columns: 1fr; } .spring-row { grid-template-columns: 1fr; }
-    .spring-state .label { font-size: 2.6vw; } .spring-state .desc { font-size: 2.2vw; }
-    .reveal-hint { font-size: 2.4vw; bottom: 8vh; } .counter { font-size: 2vw; } .controls-hint { font-size: 1.8vw; }
+    .spring-state .label { font-size: calc(2.6vw * var(--fs-scale)); } .spring-state .desc { font-size: calc(2.2vw * var(--fs-scale)); }
+    .reveal-hint { font-size: calc(2.4vw * var(--fs-scale)); bottom: 8vh; } .counter { font-size: calc(2vw * var(--fs-scale)); } .controls-hint { font-size: calc(1.8vw * var(--fs-scale)); }
   }
-  @media (max-width: 480px) { .cover h1 { font-size: 11vw; } .content { font-size: 4vw; } .controls-hint { font-size: 0; } }
+  @media (max-width: 480px) { .cover h1 { font-size: calc(11vw * var(--fs-scale)); } .content { font-size: calc(4vw * var(--fs-scale)); } .controls-hint { font-size: 0; } }
 
   /* 列印模式 */
   @media print {
     html, body { background: white; color: black; height: auto; overflow: visible; }
     .slide { display: flex !important; page-break-after: always; position: relative; background: white !important; color: black; height: 100vh; }
-    .hud, .reveal-hint { display: none; }
+    .hud, .reveal-hint, .ctrl-group, .ios-tip { display: none; }
     .card, .callout, .formula, .big-formula { background: #f5f5f5 !important; color: black; }
-    .blank { color: #d35400; }
+    .blank, .blank.show { color: #d35400; }
   }
 </style>
 <!-- ===== KaTeX 0.16.10 (inlined offline) ===== -->
@@ -181,6 +232,25 @@
 
 </head>
 <body>
+
+<!-- 右上角控制按鈕組（字體縮放 + 全屏） -->
+<div class="ctrl-group">
+  <button class="ctrl-btn" id="zoomOut" aria-label="字體縮小">A−</button>
+  <button class="ctrl-btn" id="zoomReset" aria-label="重置字體">100%</button>
+  <button class="ctrl-btn" id="zoomIn" aria-label="字體放大">A+</button>
+  <button class="ctrl-btn" id="fsBtn" aria-label="切換全屏">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 3h7v2H5v5H3V3zm11 0h7v7h-2V5h-5V3zM3 14h2v5h5v2H3v-7zm16 0h2v7h-7v-2h5v-5z"/>
+    </svg>
+  </button>
+</div>
+
+<!-- iPad / iOS 提示氣泡 -->
+<div class="ios-tip" id="iosTip" role="alert">
+  <span class="close" id="iosTipClose" aria-label="關閉提示">✕</span>
+  <strong>iPad / iPhone 全屏限制</strong><br>
+  iOS Safari 不支援網頁全屏按鈕。請點 Safari 下方 <strong>分享 → 加到主畫面</strong>，從主畫面圖示啟動即可全屏播放。
+</div>
 
 <div class="deck" id="deck">
 
@@ -307,6 +377,33 @@
   </section>
 
   <!-- ========================================= -->
+  <!-- 範例 7：逐步顯示 slide（Space 每下顯示一個區塊） -->
+  <!-- ========================================= -->
+  <!-- 用法：data-step-reveal="true" 啟用逐步顯示 -->
+  <!-- 每個 .reveal-step 是一個區塊，按 Space 逐一顯示 -->
+  <!-- 全部顯示後再按 Space 才進入下一頁 -->
+  <section class="slide" data-step-reveal="true">
+    <div class="slide-header">
+      <span class="slide-tag"><!-- 填寫：標籤 --></span>
+      <span class="slide-title"><!-- 填寫：頁標題 --></span>
+    </div>
+
+    <div class="reveal-step">
+      <!-- 第一個區塊：問題描述或第一個概念 -->
+    </div>
+
+    <div class="reveal-step">
+      <!-- 第二個區塊：例子或深入說明 -->
+    </div>
+
+    <div class="reveal-step">
+      <!-- 第三個區塊：總結或結論 -->
+    </div>
+
+    <div class="reveal-hint" data-hint>按 空格鍵 / 點擊 逐步揭曉</div>
+  </section>
+
+  <!-- ========================================= -->
   <!-- 額外 slide 區（複製上方範例增減） -->
   <!-- ========================================= -->
   <!-- 提示：
@@ -314,6 +411,7 @@
     - 表格 slide：用 <table> + th（標題行）+ td（內容行）
     - 公式 slide：用 .big-formula（大標題級）或 .formula（行內級）
     - 目錄 slide：用 .toc > li 列舉
+    - 逐步顯示 slide：用 data-step-reveal + .reveal-step 包裹每個區塊
   -->
 
 </div>
@@ -322,7 +420,7 @@
 <div class="hud">
   <div class="counter" id="counter">1 / 6</div>
   <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
-  <div class="controls-hint">← → / 滑動 切換頁 · Space / 點擊 揭曉填空 · F 全螢幕</div>
+  <div class="controls-hint">← → / 滑動 切換頁 · Space 逐步揭曉 · F 全螢幕 · +/− 縮放字體</div>
 </div>
 
 <script>
@@ -354,8 +452,6 @@
     if (hint) hint.classList.add('hidden');
   }
 
-  // 離開當前頁時呼叫:若該頁是揭曉題且已揭曉,重置為 fresh 狀態
-  // 結果:無論按 ← 或 → 離開揭曉頁,下次回來都要重新 Space 揭曉
   function resetCurrentReveal() {
     const slide = slides[current];
     if (slide.dataset.reveal === 'true') {
@@ -367,16 +463,52 @@
     }
   }
 
+  // 逐次展示
+  function advanceStepReveal() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal !== 'true') return false;
+    const steps = slide.querySelectorAll('.reveal-step');
+    for (let i = 0; i < steps.length; i++) {
+      if (!steps[i].classList.contains('visible')) {
+        steps[i].classList.add('visible');
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function resetStepReveal() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true') {
+      slide.querySelectorAll('.reveal-step').forEach(s => s.classList.remove('visible'));
+      const hint = slide.querySelector('[data-hint]');
+      if (hint) hint.classList.remove('hidden');
+    }
+  }
+
   function next() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true' && advanceStepReveal()) return;
     if (isRevealable()) { reveal(); return; }
     advance();
   }
 
-  function skipNext() { advance(); }
+  function skipNext() {
+    const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true') {
+      const hiddenSteps = slide.querySelectorAll('.reveal-step:not(.visible)');
+      if (hiddenSteps.length > 0) {
+        hiddenSteps[0].classList.add('visible');
+        return;
+      }
+    }
+    advance();
+  }
 
   function advance() {
     if (current < total - 1) {
       resetCurrentReveal();
+      resetStepReveal();
       current++;
       render();
     }
@@ -385,24 +517,31 @@
   function prev() {
     if (current > 0) {
       resetCurrentReveal();
+      resetStepReveal();
       current--;
       render();
     }
   }
 
-  // 揭曉題上 Space/點擊:已揭曉則隱藏、未揭曉則揭曉(toggle)
-  // 非揭曉題上 Space/點擊:直接前進
-  // 前進專鍵:→ / 右鍵 / 左滑
   function toggleOrNext() {
     const slide = slides[current];
+    if (slide.dataset.stepReveal === 'true') {
+      const hiddenSteps = slide.querySelectorAll('.reveal-step:not(.visible)');
+      if (hiddenSteps.length > 0) {
+        hiddenSteps[0].classList.add('visible');
+        return;
+      }
+      advance();
+      return;
+    }
     if (slide.dataset.reveal === 'true') {
       if (slide.classList.contains('revealed')) {
-        resetCurrentReveal();   // 已揭曉 → 隱藏(留在當頁)
+        resetCurrentReveal();
       } else {
-        reveal();               // 未揭曉 → 揭曉
+        reveal();
       }
     } else {
-      advance();                // 非揭曉題 → 前進
+      advance();
     }
   }
 
@@ -413,11 +552,67 @@
       case ' ': case 'Enter': e.preventDefault(); toggleOrNext(); break;
       case 'Home': current = 0; render(); break;
       case 'End': current = total - 1; render(); break;
-      case 'f': case 'F':
-        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-        else document.exitFullscreen();
-        break;
+      case 'f': case 'F': toggleFullscreen(); break;
+      case '+': case '=': e.preventDefault(); applyZoom(currentZoom + ZOOM_STEP); break;
+      case '-': case '_': e.preventDefault(); applyZoom(currentZoom - ZOOM_STEP); break;
+      case '0': e.preventDefault(); applyZoom(1.0); break;
     }
+  });
+
+  // ===== 字體縮放 =====
+  const zoomInBtn = document.getElementById('zoomIn');
+  const zoomOutBtn = document.getElementById('zoomOut');
+  const zoomResetBtn = document.getElementById('zoomReset');
+  const ZOOM_MIN = 0.7, ZOOM_MAX = 1.6, ZOOM_STEP = 0.1;
+  let currentZoom = 1.0;
+
+  function applyZoom(z) {
+    z = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z * 100) / 100));
+    currentZoom = z;
+    document.documentElement.style.setProperty('--fs-scale', z);
+    zoomResetBtn.textContent = Math.round(z * 100) + '%';
+    zoomInBtn.disabled = z >= ZOOM_MAX;
+    zoomOutBtn.disabled = z <= ZOOM_MIN;
+  }
+
+  zoomInBtn.addEventListener('click', (e) => { e.stopPropagation(); applyZoom(currentZoom + ZOOM_STEP); });
+  zoomOutBtn.addEventListener('click', (e) => { e.stopPropagation(); applyZoom(currentZoom - ZOOM_STEP); });
+  zoomResetBtn.addEventListener('click', (e) => { e.stopPropagation(); applyZoom(1.0); });
+
+  // ===== 全屏切換 + iOS 提示 =====
+  function isIOSorIPadOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  const fsBtn = document.getElementById('fsBtn');
+  const iosTip = document.getElementById('iosTip');
+  const iosTipClose = document.getElementById('iosTipClose');
+  let iosTipTimer = null;
+
+  function showIOSTip() {
+    iosTip.classList.add('show');
+    clearTimeout(iosTipTimer);
+    iosTipTimer = setTimeout(() => iosTip.classList.remove('show'), 6000);
+  }
+
+  function toggleFullscreen() {
+    if (isIOSorIPadOS() || !document.documentElement.requestFullscreen) {
+      showIOSTip();
+      return;
+    }
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => showIOSTip());
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  fsBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); });
+  iosTipClose.addEventListener('click', (e) => {
+    e.stopPropagation();
+    iosTip.classList.remove('show');
+    clearTimeout(iosTipTimer);
   });
 
   // 觸控
@@ -425,7 +620,7 @@
   const SWIPE_THRESHOLD = 50, SWIPE_MAX_TIME = 600;
 
   document.addEventListener('touchstart', (e) => {
-    if (e.target.closest('.hud')) return;
+    if (e.target.closest('.hud, .ctrl-group, .ios-tip')) return;
     const t = e.touches[0]; touchStartX = t.clientX; touchStartY = t.clientY; touchStartT = Date.now(); isSwiping = false;
   }, { passive: true });
 
@@ -446,19 +641,27 @@
   }, { passive: false });
 
   document.addEventListener('click', (e) => {
-    if (e.target.closest('.hud')) return;
+    if (e.target.closest('.hud, .ctrl-group, .ios-tip')) return;
     if (isSwiping) { isSwiping = false; return; }
     toggleOrNext();
   });
 
   // 右鍵點擊:前進(攔截 browser context menu)
   document.addEventListener('contextmenu', (e) => {
-    if (e.target.closest('.hud')) return;
+    if (e.target.closest('.hud, .ctrl-group, .ios-tip')) return;
     e.preventDefault();
     skipNext();
   });
 
   render();
+
+  // 單個填空點擊顯示/隱藏（不影響頁面切換）
+  document.querySelectorAll('.blank').forEach(function(blank) {
+    blank.addEventListener('click', function(e) {
+      e.stopPropagation();
+      this.classList.toggle('show');
+    });
+  });
 
   // ===== KaTeX 自動渲染所有公式 =====
   if (typeof renderMathInElement === 'function') {
