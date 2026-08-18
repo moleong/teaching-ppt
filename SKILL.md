@@ -44,6 +44,7 @@ when_to_use:
 |------|------|----------|----------|
 | 1 | **簡報式** | 課堂投影、師生互動、逐步揭曉答案 | `assets/template.html` |
 | 2 | **閱讀式** | 課後自學、參考答案、講義形式 | `assets/template-reader.html` |
+| 2b | **閱讀式（進階）** | 長講義、需要章節導航或部分題目答案可揭曉 | `assets/template-reader-advanced.html` |
 
 - 若內容含複雜公式（分數、希臘符號巢狀等），簡報式可選 `template-latex.html`
 - 閱讀式暫無離線 LaTeX 版本（MathJax CDN 已足夠），日後有離線需求再追加
@@ -171,6 +172,12 @@ when_to_use:
 ### 模板
 
 複製 `assets/template-reader.html` 起步。
+
+若講義較長、需要**章節導航列**或**部分題目答案可點擊揭曉**，改用 `assets/template-reader-advanced.html`：
+
+- 開啟 sticky 導航：在 `<body>` 加上 `data-nav="true"`，並把各區塊加上 `id`。
+- 開啟單題 reveal：在 `.question` 加上 `data-reveal="true"`。
+- 教學內容區塊用 `.section`，題目區塊用 `.question`，樣式會自動區分。
 
 ### 結構模式
 

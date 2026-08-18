@@ -22,13 +22,14 @@
 ├── SKILL.md                      # Skill 定義：觸發條件、使用流程、設計規範
 ├── README.md                     # 本檔案
 ├── assets/
-│   ├── template.html             # 簡報式模板（深色主題）
-│   ├── template-latex.html       # 簡報式 + KaTeX 離線公式
-│   ├── template-reader.html      # 閱讀式模板（淺色主題）
-│   ├── katex-inline.html         # KaTeX 內聯資源片段
-│   ├── build-katex.py            # 重建 KaTeX 模板腳本
-│   ├── upgrade-to-latex.py       # 舊模板升級 LaTeX 腳本
-│   └── latex-cookbook.md         # LaTeX 避坑指南
+│   ├── template.html                  # 簡報式模板（深色主題）
+│   ├── template-latex.html            # 簡報式 + KaTeX 離線公式
+│   ├── template-reader.html           # 閱讀式模板（淺色主題）
+│   ├── template-reader-advanced.html  # 閱讀式進階模板（可選導航 / reveal）
+│   ├── katex-inline.html              # KaTeX 內聯資源片段
+│   ├── build-katex.py                 # 重建 KaTeX 模板腳本
+│   ├── upgrade-to-latex.py            # 舊模板升級 LaTeX 腳本
+│   └── latex-cookbook.md              # LaTeX 避坑指南
 ```
 
 ---
@@ -83,6 +84,8 @@ cp assets/template-reader.html my-reader.html  # 閱讀式
 - **響應式**：手機、平板、桌面自適應
 - **列印友好**：去除陰影、保留邊框、白底
 - **公式**：MathJax CDN（`\(...\)` 行內、`\[...\]` 獨立）
+
+如需**導航列、章節跳轉、題目答案點擊揭曉**等功能，可改用 `template-reader-advanced.html`：在 `<body>` 加上 `data-nav="true"` 開啟 sticky 導航，在個別 `.question` 加上 `data-reveal="true"` 讓該題答案可點擊顯示。
 
 ---
 

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-status-bar-style" content="default">
+<title><!-- 改：你的頁面標題 --></title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", "Helvetica Neue", sans-serif;
+    line-height: 1.7;
+    background: #f8f9fa;
+    color: #333;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 主容器 */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+  }
+
+  /* 頁面標題 */
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 1.9em;
+    font-weight: 700;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 12px;
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ========================================= */
+  /* 卡片區塊：.section（教學內容）與 .question（題目） */
+  /* ========================================= */
+  .section,
+  .question {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  /* 教學區塊標題：深藍灰，帶淺色底線 */
+  .section h2 {
+    color: #2c3e50;
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #e8f4fc;
+    padding-bottom: 8px;
+  }
+
+  /* 題目區塊標題：藍色 */
+  .question h2 {
+    color: #2980b9;
+    font-size: 1.25em;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  /* 子標題：適用於 .section 與 .question 內的小節 */
+  .section h3,
+  .question h3 {
+    color: #2c3e50;
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+
+  .section > p,
+  .question > p {
+    margin-bottom: 10px;
+    line-height: 1.8;
+  }
+
+  .section ul, .section ol,
+  .question ul, .question ol {
+    margin: 10px 0 10px 1.5em;
+  }
+
+  .section li,
+  .question li {
+    margin-bottom: 6px;
+    line-height: 1.7;
+  }
+
+  /* 子問題 */
+  .sub-q {
+    color: #2980b9;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  /* 答案區 */
+  .answer {
+    background: #e8f4fc;
+    padding: 14px 18px;
+    border-left: 4px solid #3498db;
+    margin-top: 14px;
+    border-radius: 4px;
+  }
+
+  .answer .step {
+    margin: 10px 0;
+    line-height: 1.8;
+  }
+
+  .answer .step:first-child { margin-top: 0; }
+  .answer .step:last-child { margin-bottom: 0; }
+
+  .answer strong {
+    color: #2c3e50;
+  }
+
+  /* 公式區塊 */
+  .formula {
+    text-align: center;
+    padding: 10px 0;
+    margin: 8px 0;
+    overflow-x: auto;
+  }
+
+  /* 行內數學式（備用，未使用 MathJax 時） */
+  .math {
+    font-style: italic;
+    font-family: "Cambria Math", "Times New Roman", serif;
+  }
+
+  /* 重點標記 */
+  .em { color: #e74c3c; font-weight: 600; }
+  .ok { color: #27ae60; font-weight: 600; }
+  .blue { color: #2980b9; font-weight: 600; }
+
+  /* 提示 / 說明 */
+  .note {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+
+  .callout {
+    background: #fff9e6;
+    border-left: 4px solid #f5a623;
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
+
+  .callout.danger {
+    background: #fdecea;
+    border-left-color: #e74c3c;
+  }
+
+  .callout.ok {
+    background: #eafaf1;
+    border-left-color: #27ae60;
+  }
+
+  /* 表格 */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.95em;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+
+  th {
+    background: #f0f4f8;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) { background: #fafbfc; }
+
+  /* SVG 圖示 */
+  .diagram {
+    display: block;
+    margin: 14px auto;
+    max-width: 100%;
+  }
+
+  /* 頁底說明 */
+  .footer-note {
+    text-align: center;
+    color: #95a5a6;
+    font-size: 0.85em;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* ========================================= */
+  /* 可選模組 A：Sticky 頂部導航列 + 章節目錄面板 */
+  /* 啟用方式：在 <body> 加上 data-nav="true" */
+  /* ========================================= */
+  body[data-nav="true"] {
+    /* 為固定導航列預留空間，可依實際導航列高度調整 */
+  }
+
+  body[data-nav="true"] .top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 42px;
+    padding: 0 16px;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: transform 0.25s ease;
+  }
+
+  body[data-nav="true"] .top-nav.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  body[data-nav="true"] .nav-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f5f9fc;
+    border: 1px solid #dbe9f3;
+    border-radius: 6px;
+    color: #2980b9;
+    font-size: 0.9em;
+    font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  body[data-nav="true"] .nav-menu-btn:hover {
+    background: #e8f4fc;
+  }
+
+  body[data-nav="true"] .nav-current {
+    flex: 1;
+    text-align: center;
+    color: #555;
+    font-size: 0.88em;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  body[data-nav="true"] .nav-top-btn {
+    width: 30px;
+    height: 30px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #666;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  body[data-nav="true"] .nav-top-btn:hover {
+    background: #e0e0e0;
+  }
+
+  body[data-nav="true"] .nav-panel {
+    display: none;
+    position: fixed;
+    top: 42px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(2px);
+  }
+
+  body[data-nav="true"] .nav-panel.open {
+    display: block;
+  }
+
+  body[data-nav="true"] .nav-panel-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    max-height: 80vh;
+    background: #fff;
+    border-bottom: 2px solid #2980b9;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    overflow-y: auto;
+  }
+
+  body[data-nav="true"] .nav-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 2;
+  }
+
+  body[data-nav="true"] .nav-panel-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+
+  body[data-nav="true"] .nav-panel-close {
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    color: #666;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  body[data-nav="true"] .nav-panel-close:hover {
+    background: #f0f0f0;
+  }
+
+  body[data-nav="true"] .nav-panel-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  body[data-nav="true"] .nav-chapter-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  body[data-nav="true"] .nav-chapter-list li {
+    margin: 0;
+  }
+
+  body[data-nav="true"] .nav-chapter-list a {
+    display: block;
+    padding: 6px 8px;
+    color: #444;
+    text-decoration: none;
+    font-size: 0.85em;
+    line-height: 1.5;
+    border-radius: 4px;
+    border-left: 3px solid transparent;
+  }
+
+  body[data-nav="true"] .nav-chapter-list a:hover {
+    background: #f5f9fc;
+    color: #2980b9;
+    border-left-color: #2980b9;
+  }
+
+  /* ========================================= */
+  /* 可選模組 B：答案點擊揭曉 */
+  /* 啟用方式：在 .question 加上 data-reveal="true" */
+  /* ========================================= */
+  .question[data-reveal="true"] {
+    cursor: pointer;
+  }
+
+  .question[data-reveal="true"]:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .question[data-reveal="true"]:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+  }
+
+  .question[data-reveal="true"] .reveal-hint {
+    color: #7f8c8d;
+    font-size: 0.85em;
+    margin-top: 12px;
+    text-align: center;
+    user-select: none;
+  }
+
+  .question[data-reveal="true"] .answer {
+    display: none;
+  }
+
+  .question[data-reveal="true"].is-revealed .answer {
+    display: block;
+  }
+
+  /* 為固定導航列預留空間，錨點不被遮擋 */
+  .section,
+  .question,
+  h1 {
+    scroll-margin-top: 56px;
+  }
+
+  /* MathJax 渲染後容器微調 */
+  mjx-container {
+    font-size: 1.05em !important;
+  }
+
+  /* 響應式：手機 / 小螢幕 */
+  @media (max-width: 640px) {
+    .container {
+      padding: 16px 14px 32px;
+    }
+    h1 {
+      font-size: 1.5em;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .section,
+    .question {
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .section h2,
+    .question h2 {
+      font-size: 1.1em;
+    }
+    .answer {
+      padding: 12px 14px;
+    }
+    th, td {
+      padding: 8px;
+      font-size: 0.9em;
+    }
+    body[data-nav="true"] .nav-panel-body {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px;
+    }
+  }
+
+  /* 響應式：平板 */
+  @media (max-width: 768px) {
+    body[data-nav="true"] .top-nav {
+      padding: 0 12px;
+    }
+
+    body[data-nav="true"] .nav-current {
+      font-size: 0.82em;
+    }
+
+    body[data-nav="true"] .nav-panel-inner {
+      max-height: 85vh;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1100px) {
+    body[data-nav="true"] .nav-panel-body {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* 列印 */
+  @media print {
+    body {
+      background: white;
+      color: black;
+    }
+    .container {
+      max-width: 100%;
+      padding: 0;
+    }
+    h1 {
+      border-bottom-color: #999;
+      color: #000;
+    }
+    .section,
+    .question {
+      box-shadow: none;
+      border: 1px solid #ddd;
+      page-break-inside: avoid;
+    }
+    .answer {
+      display: block !important;
+      background: #f5f5f5;
+      border-left-color: #666;
+    }
+    .callout {
+      background: #f5f5f5;
+      border-left-color: #999;
+    }
+    .callout.danger { border-left-color: #c0392b; }
+    .callout.ok { border-left-color: #27ae60; }
+    .footer-note { display: none; }
+    .reveal-hint { display: none; }
+    body[data-nav="true"] .top-nav,
+    body[data-nav="true"] .nav-panel { display: none; }
+  }
+</style>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]'], ['$$', '$$']]
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+</head>
+
+<!--
+  =========================================
+  使用說明
+  =========================================
+  1. 這是「閱讀式」進階範本，適合長篇講義或混合講義+題目的頁面。
+  2. 預設答案直接可見；如需某題點擊揭曉，在該 .question 加上 data-reveal="true"。
+  3. 如需 sticky 頂部導航與章節目錄，在 <body> 加上 data-nav="true"，
+     並加入下面的 <nav>...</nav> 與 <div class="nav-panel">...</div> 區塊。
+  4. 教學內容請用 .section，例題與練習題請用 .question。
+-->
+
+<body>
+
+<div class="container">
+
+  <!-- ========================================= -->
+  <!-- 頁面標題（改 h1 即可） -->
+  <!-- ========================================= -->
+  <h1><!-- 填寫：頁面大標題，如 "物理第一冊｜第五章 曲線運動 講義" --></h1>
+
+  <!-- ========================================= -->
+  <!-- 可選導航模組（需同時在 <body> 加 data-nav="true"） -->
+  <!-- ========================================= -->
+  <!--
+  <nav class="top-nav" id="topNav" aria-label="頁面導航">
+    <button class="nav-menu-btn" id="navMenuBtn" aria-expanded="false" aria-controls="navPanel">
+      <span class="nav-menu-icon">☰</span>
+      <span class="nav-menu-text">目錄</span>
+    </button>
+    <div class="nav-current" id="navCurrent"><!-- 當前章節標題 --></div>
+    <button class="nav-top-btn" id="navTopBtn" title="回到頂部">↑</button>
+  </nav>
+
+  <div class="nav-panel" id="navPanel" aria-hidden="true">
+    <div class="nav-panel-inner">
+      <div class="nav-panel-header">
+        <span class="nav-panel-title"><!-- 目錄標題 --></span>
+        <button class="nav-panel-close" id="navPanelClose" aria-label="關閉目錄">✕</button>
+      </div>
+      <div class="nav-panel-body">
+        <ul class="nav-chapter-list">
+          <li><a href="#section-1" data-nav-link>1. 第一節標題</a></li>
+          <li><a href="#section-2" data-nav-link>2. 第二節標題</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  -->
+
+  <!-- ========================================= -->
+  <!-- 範例 1：教學內容區塊（.section） -->
+  <!-- ========================================= -->
+  <div class="section" id="section-1">
+    <h2>1. 教學主題</h2>
+    <p>這裡放概念說明文字，可使用 <span class="em">重點標記</span>、<span class="blue">藍色關鍵詞</span> 與 <span class="ok">正確標示</span>。</p>
+
+    <h3>一、子主題</h3>
+    <p>繼續說明……</p>
+
+    <div class="formula">\[E = mc^2\]</div>
+
+    <p class="callout ok">
+      <strong>結論：</strong>把重要的定理或結論放在這裡。
+    </p>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 範例 2：例題區塊（.question，答案直接可見） -->
+  <!-- ========================================= -->
+  <div class="question" id="q-1">
+    <h2>例 1. 例題標題</h2>
+    <p>題目描述文字。公式可寫成 \( x = v_0 t \)。</p>
+
+    <div class="answer">
+      <div class="step">
+        <strong>分析</strong>：說明解題思路。
+      </div>
+      <div class="step">
+        <strong>解</strong>：
+        \[v = \frac{s}{t}\]
+      </div>
+      <p><strong>答案：</strong>最終結果</p>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 範例 3：練習題（data-reveal="true" 點擊揭曉） -->
+  <!-- ========================================= -->
+  <div class="question" id="q-2" data-reveal="true" tabindex="0" aria-expanded="false">
+    <h2>練習 1. 練習題標題</h2>
+    <p>練習題敘述……</p>
+
+    <div class="reveal-hint">點擊顯示答案</div>
+
+    <div class="answer">
+      <div class="step">解析步驟……</div>
+      <p><strong>答案：</strong>……</p>
+    </div>
+  </div>
+
+  <!-- ========================================= -->
+  <!-- 範例 4：提示區塊 -->
+  <!-- ========================================= -->
+  <div class="callout">
+    <strong>提示：</strong>一般注意事項。
+  </div>
+
+  <div class="callout danger">
+    <strong>注意：</strong>常見錯誤或陷阱。
+  </div>
+
+  <div class="callout ok">
+    <strong>小結：</strong>關鍵結論。
+  </div>
+
+  <!-- 頁底說明 -->
+  <div class="footer-note">
+    說明：公式由 MathJax 自動渲染，首次載入需連網（之後瀏覽器會快取，可離線使用）。
+  </div>
+
+</div>
+
+<script>
+(function() {
+  /* ========================================= */
+  /* 可選導航模組腳本（只在 data-nav="true" 時執行） */
+  /* ========================================= */
+  var body = document.body;
+  if (body.getAttribute('data-nav') === 'true') {
+    var topNav = document.getElementById('topNav');
+    var navMenuBtn = document.getElementById('navMenuBtn');
+    var navPanel = document.getElementById('navPanel');
+    var navPanelClose = document.getElementById('navPanelClose');
+    var navTopBtn = document.getElementById('navTopBtn');
+    var navCurrent = document.getElementById('navCurrent');
+    var sections = document.querySelectorAll('.section, .question');
+
+    var lastScrollY = window.scrollY;
+    var ticking = false;
+    var navHeight = topNav ? topNav.offsetHeight : 42;
+    var mouseNearTop = false;
+
+    function updateNav() {
+      var currentY = window.scrollY;
+      var delta = currentY - lastScrollY;
+
+      if (currentY <= navHeight) {
+        topNav.classList.remove('is-hidden');
+      } else if (delta > 5) {
+        topNav.classList.add('is-hidden');
+        closePanel();
+      } else if (delta < -5 || mouseNearTop) {
+        topNav.classList.remove('is-hidden');
+      }
+
+      lastScrollY = currentY;
+      updateCurrentChapter();
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(updateNav);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    document.addEventListener('mousemove', function(e) {
+      mouseNearTop = e.clientY <= 20;
+      if (mouseNearTop && topNav.classList.contains('is-hidden')) {
+        topNav.classList.remove('is-hidden');
+      }
+    });
+
+    function openPanel() {
+      if (!navPanel) return;
+      navPanel.classList.add('open');
+      navPanel.setAttribute('aria-hidden', 'false');
+      navMenuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePanel() {
+      if (!navPanel) return;
+      navPanel.classList.remove('open');
+      navPanel.setAttribute('aria-hidden', 'true');
+      navMenuBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    if (navMenuBtn) {
+      navMenuBtn.addEventListener('click', function() {
+        if (navPanel.classList.contains('open')) {
+          closePanel();
+        } else {
+          openPanel();
+        }
+      });
+    }
+
+    if (navPanelClose) {
+      navPanelClose.addEventListener('click', closePanel);
+    }
+
+    if (navPanel) {
+      navPanel.addEventListener('click', function(e) {
+        if (e.target === navPanel) {
+          closePanel();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && navPanel.classList.contains('open')) {
+        closePanel();
+      }
+    });
+
+    document.querySelectorAll('[data-nav-link]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        var targetId = this.getAttribute('href').slice(1);
+        var target = document.getElementById(targetId);
+        if (target) {
+          e.preventDefault();
+          closePanel();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.pushState(null, null, '#' + targetId);
+        }
+      });
+    });
+
+    if (navTopBtn) {
+      navTopBtn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    function updateCurrentChapter() {
+      if (!navCurrent || sections.length === 0) return;
+      var current = document.title || '目錄';
+      var scrollPos = window.scrollY + navHeight + 20;
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop <= scrollPos) {
+          var h2 = sections[i].querySelector('h2');
+          if (h2) {
+            current = h2.textContent.trim();
+          }
+        } else {
+          break;
+        }
+      }
+      navCurrent.textContent = current;
+    }
+
+    updateCurrentChapter();
+  }
+
+  /* ========================================= */
+  /* 可選 Reveal 模組腳本（只對 data-reveal="true" 生效） */
+  /* ========================================= */
+  document.querySelectorAll('.question[data-reveal="true"]').forEach(function(card) {
+    function toggleAnswer() {
+      var isRevealed = card.classList.toggle('is-revealed');
+      card.setAttribute('aria-expanded', isRevealed ? 'true' : 'false');
+      if (isRevealed) {
+        var answer = card.querySelector('.answer');
+        if (answer && window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise([answer]);
+        }
+      }
+    }
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('a, button')) return;
+      toggleAnswer();
+    });
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleAnswer();
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
