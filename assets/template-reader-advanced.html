@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-status-bar-style" content="default">
 <title><!-- 改：你的頁面標題 --></title>
 <style>
+  :root { --fs-scale: 1; }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -16,6 +18,8 @@
     color: #333;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    /* 全站字級縮放（導航列 A−/A+ 控制；元件請用 em 才能隨動） */
+    font-size: calc(16px * var(--fs-scale));
   }
 
   /* 主容器 */
@@ -170,6 +174,31 @@
     border-left-color: #27ae60;
   }
 
+  /* 題型徽章（如「多選」「補償法」），用 em 以便隨字級縮放 */
+  .badge {
+    display: inline-block;
+    background: #e8f4fc;
+    color: #2980b9;
+    font-size: 0.7em;
+    font-weight: 600;
+    padding: 0.2em 0.6em;
+    border-radius: 1em;
+    margin-left: 0.4em;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  /* 答案結論條（三段式詳解的最後一段：✅ 最終答案） */
+  .answer-box {
+    background: #eafaf1;
+    border-left: 4px solid #27ae60;
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-weight: 600;
+    color: #1e8449;
+  }
+
   /* 表格 */
   table {
     width: 100%;
@@ -286,6 +315,30 @@
     background: #e0e0e0;
   }
 
+  /* 字級縮放工具鈕（A−/100%/A+） */
+  body[data-nav="true"] .nav-tools {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  body[data-nav="true"] .nav-tools button {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 6px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #666;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  body[data-nav="true"] .nav-tools button:hover {
+    background: #e0e0e0;
+  }
+
   body[data-nav="true"] .nav-panel {
     display: none;
     position: fixed;
@@ -378,6 +431,14 @@
   body[data-nav="true"] .nav-chapter-list a:hover {
     background: #f5f9fc;
     color: #2980b9;
+    border-left-color: #2980b9;
+  }
+
+  /* 目錄中當前章節的高亮（scroll-spy 由 JS 同步） */
+  body[data-nav="true"] .nav-chapter-list a.is-active {
+    background: #e8f4fc;
+    color: #2980b9;
+    font-weight: 600;
     border-left-color: #2980b9;
   }
 
@@ -556,10 +617,25 @@
   3. 如需固定（fixed）頂部導航與章節目錄，在 <body> 加上 data-nav="true"，
      並把下面的 <nav>...</nav> 與 <div class="nav-panel">...</div> 區塊
      放在 <body> 之後、.container 之前（fixed 定位，勿放文檔流中間）。
+     導航列含字級縮放鈕（A−/A+/100%），全站以 --fs-scale 縮放，
+     元件字級請用 em（不要用 rem/px），才能隨動。
   4. 教學內容請用 .section，例題與練習題請用 .question。
+  5. 詳解建議用三段式：.step（第一性原理推導）→ .callout.danger
+     （對抗式審查：列常見迷思並反駁）→ .answer-box（✅ 最終答案）；
+     題型標籤用 <span class="badge">。
+  6. <body> 後的 <noscript> 區塊是無 JS 降級（答案直接顯示），請保留。
 -->
 
 <body>
+
+<!-- 無 JS 降級：停用 JavaScript 時答案直接可見、游標還原（勿用 CSS 的 noscript 選擇器，那是無效寫法） -->
+<noscript>
+  <style>
+    .question[data-reveal="true"] .answer { display: block !important; }
+    .question[data-reveal="true"] { cursor: default; }
+    .question[data-reveal="true"] .reveal-hint { display: none; }
+  </style>
+</noscript>
 
 <!-- ========================================= -->
 <!-- 可選導航模組（需同時在 <body> 加 data-nav="true"） -->
@@ -571,7 +647,12 @@
     <span class="nav-menu-text">目錄</span>
   </button>
   <div class="nav-current" id="navCurrent">當前章節標題</div>
-  <button class="nav-top-btn" id="navTopBtn" title="回到頂部">↑</button>
+  <div class="nav-tools">
+    <button id="zoomOut" title="縮小字級" aria-label="縮小字級">A−</button>
+    <button id="zoomReset" title="重設字級" aria-label="重設字級">100%</button>
+    <button id="zoomIn" title="放大字級" aria-label="放大字級">A+</button>
+    <button class="nav-top-btn" id="navTopBtn" title="回到頂部">↑</button>
+  </div>
 </nav>
 
 <div class="nav-panel" id="navPanel" aria-hidden="true">
@@ -637,14 +718,17 @@
   <!-- 範例 3：練習題（data-reveal="true" 點擊揭曉） -->
   <!-- ========================================= -->
   <div class="question" id="q-2" data-reveal="true" tabindex="0" aria-expanded="false">
-    <h2>練習 1. 練習題標題</h2>
+    <h2>練習 1. 練習題標題 <span class="badge">多選</span></h2>
     <p>練習題敘述……</p>
 
     <div class="reveal-hint">點擊顯示答案</div>
 
     <div class="answer">
-      <div class="step">解析步驟……</div>
-      <p><strong>答案：</strong>……</p>
+      <div class="step"><strong>第一性原理：</strong>從基本定義推導……</div>
+      <div class="callout danger">
+        <strong>⚡ 對抗式審查：</strong>常見迷思……反駁：……
+      </div>
+      <div class="answer-box">✅ 最終答案</div>
     </div>
   </div>
 
@@ -722,7 +806,7 @@
       if (mouseNearTop && topNav.classList.contains('is-hidden')) {
         topNav.classList.remove('is-hidden');
       }
-    });
+    }, { passive: true });
 
     function openPanel() {
       if (!navPanel || !navMenuBtn) return;
@@ -787,21 +871,58 @@
       });
     }
 
+    /* 字級縮放（A−/100%/A+），localStorage 持久化 */
+    var zoomIn = document.getElementById('zoomIn');
+    var zoomOut = document.getElementById('zoomOut');
+    var zoomReset = document.getElementById('zoomReset');
+    if (zoomIn && zoomOut && zoomReset) {
+      var FS_KEY = 'teaching-fs-scale';
+      var fsScale = 1;
+      try {
+        var saved = parseFloat(localStorage.getItem(FS_KEY));
+        if (saved >= 0.8 && saved <= 1.5) fsScale = saved;
+      } catch (err) { /* 隱私模式等無 localStorage 時略過 */ }
+      var applyFsScale = function() {
+        document.documentElement.style.setProperty('--fs-scale', fsScale);
+        zoomReset.textContent = Math.round(fsScale * 100) + '%';
+        try { localStorage.setItem(FS_KEY, String(fsScale)); } catch (err) {}
+      };
+      zoomIn.addEventListener('click', function() {
+        fsScale = Math.min(Math.round((fsScale + 0.1) * 10) / 10, 1.5);
+        applyFsScale();
+      });
+      zoomOut.addEventListener('click', function() {
+        fsScale = Math.max(Math.round((fsScale - 0.1) * 10) / 10, 0.8);
+        applyFsScale();
+      });
+      zoomReset.addEventListener('click', function() {
+        fsScale = 1;
+        applyFsScale();
+      });
+      applyFsScale();
+    }
+
     function updateCurrentChapter() {
       if (!navCurrent || sections.length === 0) return;
       var current = document.title || '目錄';
+      var currentId = null;
       var scrollPos = window.scrollY + navHeight + 20;
       for (var i = 0; i < sections.length; i++) {
         if (sections[i].offsetTop <= scrollPos) {
           var h2 = sections[i].querySelector('h2');
           if (h2) {
             current = h2.textContent.trim();
+            currentId = sections[i].id || null;
           }
         } else {
           break;
         }
       }
       navCurrent.textContent = current;
+      /* 目錄連結同步高亮當前章節 */
+      document.querySelectorAll('[data-nav-link]').forEach(function(a) {
+        a.classList.toggle('is-active', !!currentId && a.getAttribute('href') === '#' + currentId);
+      });
     }
 
     updateCurrentChapter();

@@ -85,7 +85,12 @@ cp assets/template-reader.html my-reader.html  # 閱讀式
 - **列印友好**：去除陰影、保留邊框、白底
 - **公式**：MathJax CDN（`\(...\)` 行內、`\[...\]` 獨立）
 
-如需**導航列、章節跳轉、題目答案點擊揭曉**等功能，可改用 `template-reader-advanced.html`：在 `<body>` 加上 `data-nav="true"` 開啟固定頂部導航（fixed），在個別 `.question` 加上 `data-reveal="true"` 讓該題答案可點擊顯示。
+如需**導航列、章節跳轉、題目答案點擊揭曉**等功能，可改用 `template-reader-advanced.html`：在 `<body>` 加上 `data-nav="true"` 開啟固定頂部導航（fixed），在個別 `.question` 加上 `data-reveal="true"` 讓該題答案可點擊顯示。進階模板另含：
+
+- **字級縮放鈕**（導航列 A−／100%／A+）：`--fs-scale` 全站縮放，localStorage 持久化；元件字級須用 `em`
+- **noscript 降級**：`<body>` 後的 `<noscript>` 區塊讓無 JS 時答案直接顯示，需保留
+- **目錄自動高亮**：捲動時當前章節連結以 `.is-active` 標亮
+- **三段式詳解**：`.step`（第一性原理）→ `.callout.danger`（對抗式審查）→ `.answer-box`（✅ 答案），題型標籤用 `.badge`
 
 ---
 

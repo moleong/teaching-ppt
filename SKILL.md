@@ -179,6 +179,10 @@ when_to_use:
 - 導航區塊位置：`<nav>` 與 `.nav-panel` 必須放在 `<body>` 之後、`.container` 之前（fixed 定位，勿放在文檔流中間，否則會遮擋內容）。
 - 開啟單題 reveal：在 `.question` 加上 `data-reveal="true"`。
 - 教學內容區塊用 `.section`，題目區塊用 `.question`，樣式會自動區分。
+- 詳解建議三段式：`.step`（第一性原理推導）→ `.callout.danger`（對抗式審查：列常見迷思並反駁）→ `.answer-box`（✅ 最終答案）；題型標籤用 `<span class="badge">`（如「多選」「補償法」），放在題目 `h2` 末尾。
+- 導航列右側 `.nav-tools` 含字級縮放鈕（A−／100%／A+）：全站以 `--fs-scale` 縮放，localStorage 持久化（key `teaching-fs-scale`）；元件字級須用 `em`（不要用 rem/px）才能隨動。
+- `<body>` 後的 `<noscript>` 降級區塊（無 JS 時答案直接顯示、游標還原）必須保留。
+- 目錄連結會隨捲動自動高亮當前章節（`.is-active`，由 JS 的 `updateCurrentChapter` 同步）。
 
 ### 結構模式
 
