@@ -41,6 +41,13 @@
     to   { opacity: 1; transform: translateX(0); }
   }
 
+  /* 揭曉後：整頁可捲動，內容從頂部排列，騰出最大空間給答案 */
+  .slide.revealed {
+    overflow-y: auto;
+    justify-content: flex-start;
+    padding-top: 3vh;
+  }
+
   /* 封面 */
   .cover { align-items: center; text-align: center; background: linear-gradient(135deg, #0f3460 0%, #16213e 100%); }
   .cover h1 {
@@ -110,8 +117,24 @@
   .formula { font-family: "Cambria Math", "Latin Modern Math", serif; font-size: calc(2.0vw * var(--fs-scale)); color: #f5a623; text-align: center; margin: 2vh 0; padding: 2vh 0; background: rgba(245,166,35,0.08); border-radius: 8px; }
   .big-formula { font-size: calc(3.2vw * var(--fs-scale)); font-family: "Cambria Math", "Latin Modern Math", serif; color: #f5a623; text-align: center; margin: 3vh 0; padding: 3vh 3vw; background: rgba(245,166,35,0.08); border: 2px solid rgba(245,166,35,0.3); border-radius: 12px; }
 
+  /* 題目區 */
+  .question { font-size: calc(1.8vw * var(--fs-scale)); line-height: 1.8; }
+  .question-num { color: #e94560; font-weight: 700; font-size: calc(2vw * var(--fs-scale)); }
+  .sub-q { color: #4ecdc4; font-weight: 600; }
+
+  /* 答案區 */
+  .answer-box { margin-top: 2vh; }
+  .answer-box.hidden { display: none !important; }
+  .answer-step { margin-bottom: 1.5vh; }
+  .step-num { color: #f5a623; font-weight: 600; }
+
   /* 兩欄佈局 */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; align-items: center; margin-top: 2vh; }
+
+  /* 揭曉後：題目區域縮小，騰出空間給答案 */
+  .slide.revealed .question { font-size: calc(1.5vw * var(--fs-scale)); line-height: 1.5; }
+  .slide.revealed .question p { margin-bottom: 0.6vh; }
+  .slide.revealed .diagram { max-height: 15vh; }
 
   /* 揭曉提示 */
   .reveal-hint { position: absolute; bottom: 10vh; left: 50%; transform: translateX(-50%); color: #707090; font-size: calc(1.2vw * var(--fs-scale)); animation: pulse 1.6s infinite; }
@@ -203,10 +226,14 @@
     .card-title { font-size: calc(3vw * var(--fs-scale)); } .card-body { font-size: calc(2.7vw * var(--fs-scale)); }
     table { font-size: calc(2.6vw * var(--fs-scale)); } .callout { font-size: calc(2.7vw * var(--fs-scale)); }
     .formula { font-size: calc(4vw * var(--fs-scale)); } .big-formula { font-size: calc(7vw * var(--fs-scale)); padding: 3vh 3vw; }
+    .question { font-size: calc(3vw * var(--fs-scale)); }
     .toc { font-size: calc(4vw * var(--fs-scale)); } .toc .desc { font-size: calc(2.6vw * var(--fs-scale)); } .summary-list { font-size: calc(2.8vw * var(--fs-scale)); }
     .two-col { grid-template-columns: 1fr; } .spring-row { grid-template-columns: 1fr; }
     .spring-state .label { font-size: calc(2.6vw * var(--fs-scale)); } .spring-state .desc { font-size: calc(2.2vw * var(--fs-scale)); }
     .reveal-hint { font-size: calc(2.4vw * var(--fs-scale)); bottom: 8vh; } .counter { font-size: calc(2vw * var(--fs-scale)); } .controls-hint { font-size: calc(1.8vw * var(--fs-scale)); }
+    .slide.revealed .question { font-size: calc(2.4vw * var(--fs-scale)); }
+    .slide.revealed .diagram { max-height: 12vh; }
+    .slide.revealed .callout { font-size: calc(2.4vw * var(--fs-scale)); }
   }
   @media (max-width: 480px) { .cover h1 { font-size: calc(11vw * var(--fs-scale)); } .content { font-size: calc(4vw * var(--fs-scale)); } .controls-hint { font-size: 0; } }
 
@@ -215,6 +242,8 @@
     html, body { background: white; color: black; height: auto; overflow: visible; }
     .slide { display: flex !important; page-break-after: always; position: relative; background: white !important; color: black; height: 100vh; }
     .hud, .reveal-hint, .ctrl-group, .ios-tip { display: none; }
+    .reveal-step { opacity: 1 !important; transform: none !important; }
+    [data-answer].hidden { display: block !important; }
     .card, .callout, .formula, .big-formula { background: #f5f5f5 !important; color: black; }
     .blank, .blank.show { color: #d35400; }
   }
@@ -438,11 +467,6 @@
     progressBar.style.width = ((current + 1) / total * 100) + '%';
   }
 
-  function isRevealable() {
-    const slide = slides[current];
-    return slide.dataset.reveal === 'true' && !slide.classList.contains('revealed');
-  }
-
   function reveal() {
     const slide = slides[current];
     slide.classList.add('revealed');
@@ -486,22 +510,8 @@
     }
   }
 
-  function next() {
-    const slide = slides[current];
-    if (slide.dataset.stepReveal === 'true' && advanceStepReveal()) return;
-    if (isRevealable()) { reveal(); return; }
-    advance();
-  }
-
+  // 前進專鍵（→ / PageDown / 右鍵 / 左滑）：直接翻頁，不停留在中間揭曉狀態
   function skipNext() {
-    const slide = slides[current];
-    if (slide.dataset.stepReveal === 'true') {
-      const hiddenSteps = slide.querySelectorAll('.reveal-step:not(.visible)');
-      if (hiddenSteps.length > 0) {
-        hiddenSteps[0].classList.add('visible');
-        return;
-      }
-    }
     advance();
   }
 
@@ -526,11 +536,7 @@
   function toggleOrNext() {
     const slide = slides[current];
     if (slide.dataset.stepReveal === 'true') {
-      const hiddenSteps = slide.querySelectorAll('.reveal-step:not(.visible)');
-      if (hiddenSteps.length > 0) {
-        hiddenSteps[0].classList.add('visible');
-        return;
-      }
+      if (advanceStepReveal()) return;
       advance();
       return;
     }
@@ -550,8 +556,8 @@
       case 'ArrowRight': case 'PageDown': e.preventDefault(); skipNext(); break;
       case 'ArrowLeft':  case 'PageUp':   e.preventDefault(); prev(); break;
       case ' ': case 'Enter': e.preventDefault(); toggleOrNext(); break;
-      case 'Home': current = 0; render(); break;
-      case 'End': current = total - 1; render(); break;
+      case 'Home': e.preventDefault(); resetCurrentReveal(); resetStepReveal(); current = 0; render(); break;
+      case 'End': e.preventDefault(); resetCurrentReveal(); resetStepReveal(); current = total - 1; render(); break;
       case 'f': case 'F': toggleFullscreen(); break;
       case '+': case '=': e.preventDefault(); applyZoom(currentZoom + ZOOM_STEP); break;
       case '-': case '_': e.preventDefault(); applyZoom(currentZoom - ZOOM_STEP); break;

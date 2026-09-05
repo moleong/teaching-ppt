@@ -348,7 +348,7 @@ python assets/upgrade-to-latex.py <html_path> --mapping <mapping.json>
 
 每次生成後，主動確認：
 1. 在瀏覽器開啟，封面正常顯示
-2. Space → 揭曉答案 → Space → 進下一頁（正確節奏）
+2. Space → 揭曉答案 → → 進下一頁（正確節奏；注意揭曉題上 Space 是 toggle 顯示/隱藏，會留在當頁）
 3. → → 直接翻頁（不卡在中間揭曉狀態）
 4. ← 回上一頁，確認填空/答案已重置（方便重播）
 5. DevTools Device Mode → iPad Pro portrait → 字體可讀
