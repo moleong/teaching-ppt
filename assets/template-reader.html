@@ -245,7 +245,24 @@
     .question {
       box-shadow: none;
       border: 1px solid #ddd;
+      margin-bottom: 12px;
+      padding: 12px 16px;
+    }
+    /* 長卡片允許跨頁拆分，改為保護不可拆的原子單元 */
+    .formula,
+    table,
+    .callout,
+    .diagram,
+    mjx-container[display="true"],
+    tr,
+    li {
+      break-inside: avoid;
       page-break-inside: avoid;
+    }
+    h2,
+    h3 {
+      break-after: avoid;
+      page-break-after: avoid;
     }
     .answer {
       background: #f5f5f5;
