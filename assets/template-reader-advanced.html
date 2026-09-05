@@ -210,16 +210,19 @@
   }
 
   /* ========================================= */
-  /* 可選模組 A：Sticky 頂部導航列 + 章節目錄面板 */
+  /* 可選模組 A：Fixed 頂部導航列（固定於 viewport 頂部）+ 章節目錄面板 */
   /* 啟用方式：在 <body> 加上 data-nav="true" */
   /* ========================================= */
   body[data-nav="true"] {
-    /* 為固定導航列預留空間，可依實際導航列高度調整 */
+    /* 為固定導航列預留空間。注意 42px 同時寫在：此處 padding-top、.top-nav 的 height、.nav-panel 的 top、JS 的 navHeight fallback——調整高度時四處需同步 */
+    padding-top: 42px;
   }
 
   body[data-nav="true"] .top-nav {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -529,6 +532,7 @@
     .reveal-hint { display: none; }
     body[data-nav="true"] .top-nav,
     body[data-nav="true"] .nav-panel { display: none; }
+    body[data-nav="true"] { padding-top: 0; }
   }
 </style>
 <script>
@@ -549,12 +553,42 @@
   =========================================
   1. 這是「閱讀式」進階範本，適合長篇講義或混合講義+題目的頁面。
   2. 預設答案直接可見；如需某題點擊揭曉，在該 .question 加上 data-reveal="true"。
-  3. 如需 sticky 頂部導航與章節目錄，在 <body> 加上 data-nav="true"，
-     並加入下面的 <nav>...</nav> 與 <div class="nav-panel">...</div> 區塊。
+  3. 如需固定（fixed）頂部導航與章節目錄，在 <body> 加上 data-nav="true"，
+     並把下面的 <nav>...</nav> 與 <div class="nav-panel">...</div> 區塊
+     放在 <body> 之後、.container 之前（fixed 定位，勿放文檔流中間）。
   4. 教學內容請用 .section，例題與練習題請用 .question。
 -->
 
 <body>
+
+<!-- ========================================= -->
+<!-- 可選導航模組（需同時在 <body> 加 data-nav="true"） -->
+<!-- ========================================= -->
+<!--
+<nav class="top-nav" id="topNav" aria-label="頁面導航">
+  <button class="nav-menu-btn" id="navMenuBtn" aria-expanded="false" aria-controls="navPanel">
+    <span class="nav-menu-icon">☰</span>
+    <span class="nav-menu-text">目錄</span>
+  </button>
+  <div class="nav-current" id="navCurrent">當前章節標題</div>
+  <button class="nav-top-btn" id="navTopBtn" title="回到頂部">↑</button>
+</nav>
+
+<div class="nav-panel" id="navPanel" aria-hidden="true">
+  <div class="nav-panel-inner">
+    <div class="nav-panel-header">
+      <span class="nav-panel-title">目錄標題</span>
+      <button class="nav-panel-close" id="navPanelClose" aria-label="關閉目錄">✕</button>
+    </div>
+    <div class="nav-panel-body">
+      <ul class="nav-chapter-list">
+        <li><a href="#section-1" data-nav-link>1. 第一節標題</a></li>
+        <li><a href="#section-2" data-nav-link>2. 第二節標題</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+-->
 
 <div class="container">
 
@@ -562,35 +596,6 @@
   <!-- 頁面標題（改 h1 即可） -->
   <!-- ========================================= -->
   <h1><!-- 填寫：頁面大標題，如 "物理第一冊｜第五章 曲線運動 講義" --></h1>
-
-  <!-- ========================================= -->
-  <!-- 可選導航模組（需同時在 <body> 加 data-nav="true"） -->
-  <!-- ========================================= -->
-  <!--
-  <nav class="top-nav" id="topNav" aria-label="頁面導航">
-    <button class="nav-menu-btn" id="navMenuBtn" aria-expanded="false" aria-controls="navPanel">
-      <span class="nav-menu-icon">☰</span>
-      <span class="nav-menu-text">目錄</span>
-    </button>
-    <div class="nav-current" id="navCurrent"><!-- 當前章節標題 --></div>
-    <button class="nav-top-btn" id="navTopBtn" title="回到頂部">↑</button>
-  </nav>
-
-  <div class="nav-panel" id="navPanel" aria-hidden="true">
-    <div class="nav-panel-inner">
-      <div class="nav-panel-header">
-        <span class="nav-panel-title"><!-- 目錄標題 --></span>
-        <button class="nav-panel-close" id="navPanelClose" aria-label="關閉目錄">✕</button>
-      </div>
-      <div class="nav-panel-body">
-        <ul class="nav-chapter-list">
-          <li><a href="#section-1" data-nav-link>1. 第一節標題</a></li>
-          <li><a href="#section-2" data-nav-link>2. 第二節標題</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  -->
 
   <!-- ========================================= -->
   <!-- 範例 1：教學內容區塊（.section） -->
@@ -686,6 +691,7 @@
     var mouseNearTop = false;
 
     function updateNav() {
+      if (!topNav) { ticking = false; return; }
       var currentY = window.scrollY;
       var delta = currentY - lastScrollY;
 
@@ -711,6 +717,7 @@
     }, { passive: true });
 
     document.addEventListener('mousemove', function(e) {
+      if (!topNav) return;
       mouseNearTop = e.clientY <= 20;
       if (mouseNearTop && topNav.classList.contains('is-hidden')) {
         topNav.classList.remove('is-hidden');
@@ -718,7 +725,7 @@
     });
 
     function openPanel() {
-      if (!navPanel) return;
+      if (!navPanel || !navMenuBtn) return;
       navPanel.classList.add('open');
       navPanel.setAttribute('aria-hidden', 'false');
       navMenuBtn.setAttribute('aria-expanded', 'true');
@@ -726,7 +733,7 @@
     }
 
     function closePanel() {
-      if (!navPanel) return;
+      if (!navPanel || !navMenuBtn) return;
       navPanel.classList.remove('open');
       navPanel.setAttribute('aria-hidden', 'true');
       navMenuBtn.setAttribute('aria-expanded', 'false');
@@ -756,7 +763,7 @@
     }
 
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && navPanel.classList.contains('open')) {
+      if (e.key === 'Escape' && navPanel && navPanel.classList.contains('open')) {
         closePanel();
       }
     });

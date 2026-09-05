@@ -175,7 +175,8 @@ when_to_use:
 
 若講義較長、需要**章節導航列**或**部分題目答案可點擊揭曉**，改用 `assets/template-reader-advanced.html`：
 
-- 開啟 sticky 導航：在 `<body>` 加上 `data-nav="true"`，並把各區塊加上 `id`。
+- 開啟固定頂部導航（fixed）：在 `<body>` 加上 `data-nav="true"`，並把各區塊加上 `id`。
+- 導航區塊位置：`<nav>` 與 `.nav-panel` 必須放在 `<body>` 之後、`.container` 之前（fixed 定位，勿放在文檔流中間，否則會遮擋內容）。
 - 開啟單題 reveal：在 `.question` 加上 `data-reveal="true"`。
 - 教學內容區塊用 `.section`，題目區塊用 `.question`，樣式會自動區分。
 

@@ -85,7 +85,7 @@ cp assets/template-reader.html my-reader.html  # 閱讀式
 - **列印友好**：去除陰影、保留邊框、白底
 - **公式**：MathJax CDN（`\(...\)` 行內、`\[...\]` 獨立）
 
-如需**導航列、章節跳轉、題目答案點擊揭曉**等功能，可改用 `template-reader-advanced.html`：在 `<body>` 加上 `data-nav="true"` 開啟 sticky 導航，在個別 `.question` 加上 `data-reveal="true"` 讓該題答案可點擊顯示。
+如需**導航列、章節跳轉、題目答案點擊揭曉**等功能，可改用 `template-reader-advanced.html`：在 `<body>` 加上 `data-nav="true"` 開啟固定頂部導航（fixed），在個別 `.question` 加上 `data-reveal="true"` 讓該題答案可點擊顯示。
 
 ---
 
