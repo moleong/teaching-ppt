@@ -183,6 +183,9 @@ when_to_use:
 - 導航列右側 `.nav-tools` 含字級縮放鈕（A−／100%／A+）：全站以 `--fs-scale` 縮放，localStorage 持久化（key `teaching-fs-scale`）；元件字級須用 `em`（不要用 rem/px）才能隨動。
 - `<body>` 後的 `<noscript>` 降級區塊（無 JS 時答案直接顯示、游標還原）必須保留。
 - 目錄連結會隨捲動自動高亮當前章節（`.is-active`，由 JS 的 `updateCurrentChapter` 同步）。
+- 寬屏適配（2026-10 起內建）：字級 `clamp(16px, 1.1vw + 4px, 24px)`——≤1024px 維持 16px 不變、iPad 橫向 ≈17px、寬屏封頂 24px（全頁 1.5 倍）；欄寬 `58em`，每行恆約 58 字。與 A−/A+ 的 `--fs-scale` 相乘、互不衝突。
+- 全屏按鈕：`fsToggle`（導航列 A+ 與 ↑ 之間，內聯 SVG 展開/縮回圖示），點擊或快捷鍵 `F` 切換 Fullscreen API；**嵌入環境被拒時**（如 Apps Script 的 sandbox iframe 無 `allowfullscreen`）顯示降級 toast，引導 iPad「分享 → 加入主畫面」替代做法。直接開 HTML 檔則可正常全屏。
+- SVG 圖示上限寬度一律用 **em**（`style="width:100%;max-width:{viewBox寬÷16}em;height:auto;"`），圖才會隨字級等比放大、維持圖文比例；勿用 px 固定。
 
 ### 結構模式
 
@@ -232,7 +235,8 @@ when_to_use:
 - **獨立公式**：`\[ \frac{1}{2}mv_0^2 = mgh \]` 或 `$$...$$`
 
 #### 6. SVG 圖示
-同簡報式，全部內聯 SVG，顏色建議：`#333`（線）、`#e74c3c`（紅）、`#27ae60`（綠）、`#3498db`（藍）
+同簡報式，全部內聯 SVG，顏色建議：`#333`（線）、`#e74c3c`（紅）、`#27ae60`（綠）、`#3498db`（藍）。
+寬度上限**一律用 em**（`max-width:{viewBox寬÷16}em`），例如 viewBox 寬 420 → `max-width:26.25em`，圖才會隨寬屏字級放大。
 
 ### 設計規範
 
@@ -243,7 +247,7 @@ when_to_use:
 | 題目卡片 | 白色 + 圓角 8px + 陰影 | 視覺分層 |
 | 答案區 | `#e8f4fc` + 左邊框 `#3498db` | 與題目區分明顯 |
 | 標題色 | `#2c3e50` / `#2980b9` | 層級分明 |
-| 容器寬度 | `max-width: 900px` 居中 | 桌面最佳閱讀行寬 |
+| 容器寬度 | `max-width: 58em` 居中（每行恆約 58 字） | 桌面最佳閱讀行寬；字級隨屏寬放大時欄寬等比跟隨 |
 | 字體 | `Microsoft JhengHei` 優先 | 中文最佳顯示 |
 
 ### 與簡報式的對照
@@ -373,6 +377,8 @@ python assets/upgrade-to-latex.py <html_path> --mapping <mapping.json>
 4. 確認公式由 MathJax 正確渲染（行內 `\(...\)` 與獨立 `\[...\]` 均正常）
 5. Ctrl+P 預覽列印，確認白底 + 去除陰影 + 題目卡片邊框保留
 6. 檔案是單一 HTML（MathJax CDN 除外）
+7. 寬屏檢查：視窗拉至 ≥1440px（或用 Device Mode 設 1920px），確認字與 SVG 圖同步放大、每行字數不變（約 58 字）、無橫向捲軸；SVG 上限寬度須為 em 而非 px
+8. （進階模板）點導航列 ⛶ 或按 `F`，確認全屏可切換、圖示隨狀態變換；若頁面部署在 Apps Script 等嵌入環境，確認被拒時顯示降級提示而非靜默失敗
 
 ## 參考範例
 

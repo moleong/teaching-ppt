@@ -18,13 +18,17 @@
     color: #333;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
-    /* 全站字級縮放（導航列 A−/A+ 控制；元件請用 em 才能隨動） */
+    /* 全站字級縮放（導航列 A−/A+ 控制；元件請用 em 才能隨動）。
+       字級隨視窗寬度自動縮放：≤1024px 維持 16px，iPad 橫向 ≈17px，≥1935px 封頂 24px；
+       第一行為降級寫法（不支援 clamp 的舊瀏覽器退回 16px），第二行覆寫生效 */
     font-size: calc(16px * var(--fs-scale));
+    font-size: calc(clamp(16px, 1.1vw + 4px, 24px) * var(--fs-scale));
   }
 
   /* 主容器 */
   .container {
-    max-width: 900px;
+    /* 欄寬以「字數」為單位（em）：每行恆約 58 字，大螢幕字放大時欄寬等比跟隨 */
+    max-width: 58em;
     margin: 0 auto;
     padding: 24px 20px 40px;
   }
@@ -339,6 +343,31 @@
     background: #e0e0e0;
   }
 
+  /* 全屏降級提示（Fullscreen API 被拒時顯示，如 Apps Script 嵌入環境） */
+  .fs-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%) translateY(8px);
+    max-width: min(90vw, 34em);
+    background: rgba(35, 42, 50, 0.92);
+    color: #fff;
+    font-size: 0.88em;
+    line-height: 1.7;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    z-index: 1200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .fs-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
   body[data-nav="true"] .nav-panel {
     display: none;
     position: fixed;
@@ -617,8 +646,11 @@
   3. 如需固定（fixed）頂部導航與章節目錄，在 <body> 加上 data-nav="true"，
      並把下面的 <nav>...</nav> 與 <div class="nav-panel">...</div> 區塊
      放在 <body> 之後、.container 之前（fixed 定位，勿放文檔流中間）。
-     導航列含字級縮放鈕（A−/A+/100%），全站以 --fs-scale 縮放，
+     導航列含字級縮放鈕（A−/A+/100%）與全屏鈕（快捷鍵 F），全站以 --fs-scale 縮放，
      元件字級請用 em（不要用 rem/px），才能隨動。
+     字級隨屏寬自動縮放（≤1024px 為 16px、寬屏封頂 24px），欄寬 58em；
+     SVG 圖上限寬度請用 em（viewBox 寬÷16），圖才會隨字放大。
+     全屏在嵌入環境（如 Apps Script iframe）會被拒並顯示降級提示，屬正常。
   4. 教學內容請用 .section，例題與練習題請用 .question。
   5. 詳解建議用三段式：.step（第一性原理推導）→ .callout.danger
      （對抗式審查：列常見迷思並反駁）→ .answer-box（✅ 最終答案）；
@@ -651,6 +683,14 @@
     <button id="zoomOut" title="縮小字級" aria-label="縮小字級">A−</button>
     <button id="zoomReset" title="重設字級" aria-label="重設字級">100%</button>
     <button id="zoomIn" title="放大字級" aria-label="放大字級">A+</button>
+    <button id="fsToggle" title="全屏顯示（快捷鍵 F）" aria-label="全屏切換" aria-pressed="false">
+      <svg class="fs-icon fs-icon-expand" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/>
+      </svg>
+      <svg class="fs-icon fs-icon-contract" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="display:none">
+        <path d="M6 2v4H2M10 2v4h4M10 14v-4h4M6 14v-4H2"/>
+      </svg>
+    </button>
     <button class="nav-top-btn" id="navTopBtn" title="回到頂部">↑</button>
   </div>
 </nav>
@@ -953,6 +993,72 @@
       }
     });
   });
+
+  /* ========================================= */
+  /* 全屏切換（Fullscreen API；嵌入環境被拒時顯示降級提示） */
+  /* ========================================= */
+  (function() {
+    var fsBtn = document.getElementById('fsToggle');
+    var toast = null;
+    var toastTimer = null;
+
+    function showToast() {
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'fs-toast';
+        toast.setAttribute('role', 'status');
+        toast.textContent = '此嵌入環境不支援全屏。iPad 替代做法：Safari 分享按鈕 →「加入主畫面」，從主畫面開啟即無瀏覽器介面；Mac：視窗左上角綠色按鈕。';
+        document.body.appendChild(toast);
+      }
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 4000);
+    }
+
+    function syncBtn() {
+      if (!fsBtn) return;
+      var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      fsBtn.setAttribute('aria-pressed', isFs ? 'true' : 'false');
+      fsBtn.title = isFs ? '退出全屏（快捷鍵 F）' : '全屏顯示（快捷鍵 F）';
+      var expand = fsBtn.querySelector('.fs-icon-expand');
+      var contract = fsBtn.querySelector('.fs-icon-contract');
+      if (expand) expand.style.display = isFs ? 'none' : '';
+      if (contract) contract.style.display = isFs ? '' : 'none';
+    }
+
+    function toggleFullscreen() {
+      var isFs = document.fullscreenElement || document.webkitFullscreenElement;
+      if (isFs) {
+        var exit = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exit) exit.call(document);
+        return;
+      }
+      var el = document.documentElement;
+      var req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (!req) { showToast(); return; }
+      try {
+        var ret = req.call(el, { navigationUI: 'hide' });
+        if (ret && typeof ret.catch === 'function') {
+          ret.catch(showToast);
+        }
+      } catch (err) {
+        showToast();
+      }
+    }
+
+    if (fsBtn) fsBtn.addEventListener('click', toggleFullscreen);
+
+    document.addEventListener('fullscreenchange', syncBtn);
+    document.addEventListener('webkitfullscreenchange', syncBtn);
+
+    /* 快捷鍵 F（無修飾鍵、非輸入狀態） */
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'f' && !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+        if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+        toggleFullscreen();
+      }
+    });
+  })();
 })();
 </script>
 

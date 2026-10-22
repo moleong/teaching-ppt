@@ -16,11 +16,16 @@
     color: #333;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    /* 字級隨視窗寬度自動縮放：≤1024px 維持 16px，iPad 橫向 ≈17px，≥1935px 封頂 24px；
+       第一行為降級寫法（不支援 clamp 的舊瀏覽器退回 16px），第二行覆寫生效 */
+    font-size: 16px;
+    font-size: clamp(16px, 1.1vw + 4px, 24px);
   }
 
   /* 主容器 */
   .container {
-    max-width: 900px;
+    /* 欄寬以「字數」為單位（em）：每行恆約 58 字，大螢幕字放大時欄寬等比跟隨 */
+    max-width: 58em;
     margin: 0 auto;
     padding: 24px 20px 40px;
   }
