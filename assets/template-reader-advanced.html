@@ -19,10 +19,10 @@
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     /* 全站字級縮放（導航列 A−/A+ 控制；元件請用 em 才能隨動）。
-       字級隨視窗寬度自動縮放：≤1024px 維持 16px，FHD ≈27px，4K 封頂 40px；
+       字級隨視窗寬度自動縮放：≤768px 維持 16px，FHD ≈35px，4K 封頂 60px；欄寬 58em 通常貼滿視窗；
        第一行為降級寫法（不支援 clamp 的舊瀏覽器退回 16px），第二行覆寫生效 */
     font-size: calc(16px * var(--fs-scale));
-    font-size: calc(clamp(16px, 1.2vw + 4px, 40px) * var(--fs-scale));
+    font-size: calc(clamp(16px, 1.6vw + 4px, 60px) * var(--fs-scale));
   }
 
   /* 主容器 */
