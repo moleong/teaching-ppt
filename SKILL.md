@@ -183,7 +183,7 @@ when_to_use:
 - 導航列右側 `.nav-tools` 含字級縮放鈕（A−／100%／A+）：全站以 `--fs-scale` 縮放，localStorage 持久化（key `teaching-fs-scale`）；元件字級須用 `em`（不要用 rem/px）才能隨動。
 - `<body>` 後的 `<noscript>` 降級區塊（無 JS 時答案直接顯示、游標還原）必須保留。
 - 目錄連結會隨捲動自動高亮當前章節（`.is-active`，由 JS 的 `updateCurrentChapter` 同步）。
-- 寬屏適配（2026-10 起內建）：字級 `clamp(16px, 1.6vw + 4px, 60px)`——≤1024px 維持 16px 不變、iPad 橫向 ≈17px、4K 封頂 60px（全頁 1.5 倍）；欄寬 `58em`，每行恆約 58 字。與 A−/A+ 的 `--fs-scale` 相乘、互不衝突。
+- 寬屏適配（2026-10 起內建）：字級 `clamp(16px, 1.6vw + 4px, 60px)`——≤750px 維持 16px 不變、iPad 橫向（1180px）≈23px、FHD ≈35px、4K 封頂 60px；欄寬 `58em`，每行恆約 58 字。導航列高 2.6em、按鈕 1.8em、錨點讓位 3.5em，皆隨字級等比放大（寬屏字放大時導航不破版）。與 A−/A+ 的 `--fs-scale` 相乘、互不衝突。
 - 全屏按鈕：`fsToggle`（導航列 A+ 與 ↑ 之間，內聯 SVG 展開/縮回圖示），點擊或快捷鍵 `F` 切換 Fullscreen API；**嵌入環境被拒時**（如 Apps Script 的 sandbox iframe 無 `allowfullscreen`）顯示降級 toast，引導 iPad「分享 → 加入主畫面」替代做法。直接開 HTML 檔則可正常全屏。
 - SVG 圖示上限寬度一律用 **em**（`style="width:100%;max-width:{viewBox寬÷16}em;height:auto;"`），圖才會隨字級等比放大、維持圖文比例；勿用 px 固定。
 

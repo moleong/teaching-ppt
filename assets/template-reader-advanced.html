@@ -247,8 +247,8 @@
   /* 啟用方式：在 <body> 加上 data-nav="true" */
   /* ========================================= */
   body[data-nav="true"] {
-    /* 為固定導航列預留空間。注意 42px 同時寫在：此處 padding-top、.top-nav 的 height、.nav-panel 的 top、JS 的 navHeight fallback——調整高度時四處需同步 */
-    padding-top: 42px;
+    /* 為固定導航列預留空間。列高 2.6em 同時寫在：此處 padding-top、.top-nav 的 height、.nav-panel 的 top；JS 的 navHeight 為執行期實測 offsetHeight，無需同步。em 化使列高隨寬屏字級公式等比放大 */
+    padding-top: 2.6em;
   }
 
   body[data-nav="true"] .top-nav {
@@ -260,9 +260,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    height: 42px;
-    padding: 0 16px;
+    gap: 0.75em;
+    height: 2.6em;
+    padding: 0 1em;
     background: #fff;
     border-bottom: 1px solid #e0e0e0;
     box-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -283,7 +283,7 @@
     color: #2980b9;
     font-size: 0.9em;
     font-weight: 600;
-    padding: 5px 12px;
+    padding: 0.3em 0.75em;
     cursor: pointer;
     transition: background 0.2s;
   }
@@ -304,8 +304,8 @@
   }
 
   body[data-nav="true"] .nav-top-btn {
-    width: 30px;
-    height: 30px;
+    width: 1.8em;
+    height: 1.8em;
     background: #f5f5f5;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -327,9 +327,9 @@
   }
 
   body[data-nav="true"] .nav-tools button {
-    min-width: 30px;
-    height: 30px;
-    padding: 0 6px;
+    min-width: 1.8em;
+    height: 1.8em;
+    padding: 0 0.35em;
     background: #f5f5f5;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -371,7 +371,7 @@
   body[data-nav="true"] .nav-panel {
     display: none;
     position: fixed;
-    top: 42px;
+    top: 2.6em;
     left: 0;
     right: 0;
     bottom: 0;
@@ -400,7 +400,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 20px;
+    padding: 0.875em 1.25em;
     border-bottom: 1px solid #eee;
     position: sticky;
     top: 0;
@@ -415,8 +415,8 @@
   }
 
   body[data-nav="true"] .nav-panel-close {
-    width: 32px;
-    height: 32px;
+    width: 2em;
+    height: 2em;
     background: none;
     border: none;
     font-size: 1.2em;
@@ -508,7 +508,7 @@
   .section,
   .question,
   h1 {
-    scroll-margin-top: 56px;
+    scroll-margin-top: 3.5em;
   }
 
   /* MathJax 渲染後容器微調 */
@@ -552,7 +552,7 @@
   /* 響應式：平板 */
   @media (max-width: 768px) {
     body[data-nav="true"] .top-nav {
-      padding: 0 12px;
+      padding: 0 0.75em;
     }
 
     body[data-nav="true"] .nav-current {
@@ -648,7 +648,7 @@
      放在 <body> 之後、.container 之前（fixed 定位，勿放文檔流中間）。
      導航列含字級縮放鈕（A−/A+/100%）與全屏鈕（快捷鍵 F），全站以 --fs-scale 縮放，
      元件字級請用 em（不要用 rem/px），才能隨動。
-     字級隨屏寬自動縮放（≤1024px 為 16px、寬屏封頂 24px），欄寬 58em；
+     字級隨屏寬自動縮放（≤750px 為 16px、FHD ≈35px、封頂 60px），欄寬 58em；導航列高 2.6em 隨動；
      SVG 圖上限寬度請用 em（viewBox 寬÷16），圖才會隨字放大。
      全屏在嵌入環境（如 Apps Script iframe）會被拒並顯示降級提示，屬正常。
   4. 教學內容請用 .section，例題與練習題請用 .question。
