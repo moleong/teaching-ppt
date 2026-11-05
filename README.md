@@ -29,6 +29,8 @@
 │   ├── katex-inline.html              # KaTeX 內聯資源片段
 │   ├── build-katex.py                 # 重建 KaTeX 模板腳本
 │   ├── upgrade-to-latex.py            # 舊模板升級 LaTeX 腳本
+│   ├── circuit.mjs                    # 電路圖生成器（SPEC 為唯一尺寸來源）
+│   ├── circuit-example.mjs            # 電路圖範例（七種符號用法）
 │   └── latex-cookbook.md              # LaTeX 避坑指南
 ```
 
