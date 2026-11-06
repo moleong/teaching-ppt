@@ -135,8 +135,8 @@
   /* 公式區塊 */
   .formula {
     text-align: center;
-    padding: 10px 0;
-    margin: 8px 0;
+    padding: 2px 0;
+    margin: 4px 0;
     overflow-x: auto;
   }
 
@@ -514,6 +514,12 @@
   /* MathJax 渲染後容器微調 */
   mjx-container {
     font-size: 1.05em !important;
+  }
+
+
+  /* 壓縮顯示公式上下空白：覆寫 MathJax v3 預設 1em 邊距（.formula 容器已同步收緊） */
+  mjx-container[display="true"] {
+    margin: 0.35em 0 !important;
   }
 
   /* 響應式：手機 / 小螢幕 */

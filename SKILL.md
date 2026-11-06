@@ -186,6 +186,7 @@ when_to_use:
 - 寬屏適配（2026-10 起內建）：字級 `clamp(16px, 1.6vw + 4px, 60px)`——≤750px 維持 16px 不變、iPad 橫向（1180px）≈23px、FHD ≈35px、4K 封頂 60px；欄寬 `58em`，每行恆約 58 字。導航列高 2.6em、按鈕 1.8em、錨點讓位 3.5em，皆隨字級等比放大（寬屏字放大時導航不破版）。與 A−/A+ 的 `--fs-scale` 相乘、互不衝突。
 - 全屏按鈕：`fsToggle`（導航列 A+ 與 ↑ 之間，內聯 SVG 展開/縮回圖示），點擊或快捷鍵 `F` 切換 Fullscreen API；**嵌入環境被拒時**（如 Apps Script 的 sandbox iframe 無 `allowfullscreen`）顯示降級 toast，引導 iPad「分享 → 加入主畫面」替代做法。直接開 HTML 檔則可正常全屏。
 - SVG 圖示上限寬度一律用 **em**（`style="width:100%;max-width:{viewBox寬÷16}em;height:auto;"`），圖才會隨字級等比放大、維持圖文比例；勿用 px 固定。
+- 顯示公式間距（2026-11 起內建）：`.formula { padding: 2px 0; margin: 4px 0; }` ＋ `mjx-container[display="true"] { margin: 0.35em 0 !important; }`——後者覆寫 MathJax v3 預設 1em 邊距（預設未覆寫時公式上下各 ~36px、極浪費版面；壓縮後每側 ~12px）。兩條規則須同時存在，缺一不可。
 
 ### 結構模式
 
