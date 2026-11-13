@@ -421,6 +421,7 @@ export class Circuit {
    * label 預設放在箭頭中點上方 22px。慣例（2026-11 起，見 SKILL.md）：箭頭畫在導線上、
    * 以顏色（紫紅）突顯，不要把箭頭偏移到導線下方/旁邊（會擠壓電壓極性標記）；僅當
    * 該支路無導線段可畫時才旁置，用 opts.labelOffset 或 opts.noLabel 調整。
+   * 長度規範：同圖統一 28–32px（與電流大小無關），受限段最短 ≥20px。
    */
   current(a, b, c, d, e, f) {
     let x1, y1, x2, y2, label, o;
