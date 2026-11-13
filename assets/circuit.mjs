@@ -36,7 +36,7 @@ export const SPEC = {
   lamp:      { span: 30, halfH: 15 },                      // 圓 r15 + 貫穿叉絲
   meter:     { span: 28, halfH: 14, r: 14, letterSize: 13 },
   capacitor: { span: 8,  halfH: 20, plateLen: 40, plateW: 3 },
-  rheostat:  { span: 48, halfH: 26, bodyH: 16, leadUp: 26 },
+  rheostat:  { span: 48, halfH: 26, bodyH: 16, leadUp: 26, minLen: 64, gap: 12 }, // 一上一下接法；span=體寬，minLen=體+引線跨距下限
   terminal:  { r: 5 },                                     // 開口接線柱（導線盡頭）
   vsource:   { span: 36, halfH: 17, r: 17 },               // 圓形電壓源；+/− 沿導線軸，+ 在導線段起點側
   current:   { color: '#d63384' },                         // 電流箭頭（紫紅）
@@ -123,16 +123,26 @@ const SYMBOLS = {
 
   rheostat: {
     span: () => SPEC.rheostat.span, halfH: () => SPEC.rheostat.halfH,
-    // 長條電阻體 + 滑片引線（自上方繞下、細箭頭觸框頂；sx 端與導線相接）
-    // opts.slider: 'left' | 'right'（滑片接到導線的哪一端，預設 right）
+    // 「一上一下」接法（四式見 SKILL.md 規範表）：段一端 = 電阻體進線端點，另一端 = 滑片引線落點。
+    // 觸點在體中心，箭頭自上方垂直向下觸框頂；引線自觸點向上繞至落點端落回導軌。
+    // opts.lead: 'right'（預設）| 'left' = 引線落點側（體靠在另一端的段端）
+    // opts.far:  'dangle'（預設）| 'wire' = 體之遠端懸空 / 經一小段導軌接通落點
+    // 僅支援水平段（垂直放置請手排）；段長由呼叫端給（o.segLen），體寬 = span。
     draw(g, abs, o = {}, ctx) {
       const { span, bodyH, leadUp } = SPEC.rheostat;
-      const sx = (o.slider === 'left' ? -1 : 1) * span / 2;
+      const len = o.segLen;
+      const half = span / 2;
+      const s = o.lead === 'left' ? -1 : 1;              // 引線落點側（+1 = 段終點側）
+      const bodyCx = -s * (len / 2 - half);              // 體中心：體靠在進線端點側
+      const footX = s * len / 2;                          // 引線落點（段端）
       ctx.useDef('arrRheo');
-      g.push(`<rect x="${-span / 2}" y="${-bodyH / 2}" width="${span}" height="${bodyH}" stroke="${SPEC.wire.color}" stroke-width="${SPEC.wire.width}" fill="#fff"/>`);
-      g.push(`<circle cx="${sx}" cy="0" r="${SPEC.wire.nodeR}" fill="${SPEC.wire.color}"/>`);
-      g.push(`<polyline points="${sx},0 ${sx},${-leadUp} 0,${-leadUp}" stroke="${SPEC.wire.color}" stroke-width="${SPEC.wire.width}" fill="none"/>`);
-      g.push(`<line x1="0" y1="${-leadUp}" x2="0" y2="${-bodyH / 2 - 2}" stroke="${SPEC.wire.color}" stroke-width="${SPEC.wire.width}" marker-end="url(#arrRheo)"/>`);
+      g.push(`<rect x="${bodyCx - half}" y="${-bodyH / 2}" width="${span}" height="${bodyH}" stroke="${SPEC.wire.color}" stroke-width="${SPEC.wire.width}" fill="#fff"/>`);
+      g.push(`<polyline points="${bodyCx},${-leadUp} ${footX},${-leadUp} ${footX},0" stroke="${SPEC.wire.color}" stroke-width="${SPEC.wire.width}" fill="none"/>`);
+      g.push(`<line x1="${bodyCx}" y1="${-leadUp}" x2="${bodyCx}" y2="${-bodyH / 2 - 2}" stroke="${SPEC.wire.color}" stroke-width="${SPEC.wire.width}" marker-end="url(#arrRheo)"/>`);
+      if (o.far === 'wire') {                             // 遠端接通：體遠端緣 → 落點 補一小段導軌
+        const farEdge = bodyCx + s * half;
+        g.push(`<line x1="${farEdge}" y1="0" x2="${footX}" y2="0" stroke="${SPEC.wire.color}" stroke-width="${SPEC.wire.width}"/>`);
+      }
     },
   },
 
@@ -339,17 +349,20 @@ export class Circuit {
         partEnd.get(k).push(ps);
       }
     }
-    // 從 (x,y) 沿 (dx,dy) 向外延伸到硬點；途中跨過的串聯元件收入 crossed
+    // 從 (x,y) 沿 (dx,dy) 向外延伸到硬點；途中跨過的串聯元件收入 crossed。
+    // via = 來路元件：跨過串聯點時記住來路，下一步不再折返（修 ≥3 元件同段時的 ping-pong）
     const extend = (x, y, dx, dy, self) => {
       let cur = [x, y];
+      let via = self;
       const crossed = [];
       for (let i = 0; i < 100; i++) {
         const k = key(cur[0], cur[1]);
         if (isHard(k)) return { end: cur, crossed };
-        const others = (partEnd.get(k) || []).filter(ps => ps !== self);
+        const others = (partEnd.get(k) || []).filter(ps => ps !== via);
         if (others.length) {                               // 串聯點：跨過該元件
           const ps = others[0];
           crossed.push(ps);
+          via = ps;
           cur = (ps[0] === cur[0] && ps[1] === cur[1]) ? [ps[2], ps[3]] : [ps[0], ps[1]];
           continue;
         }
@@ -405,8 +418,9 @@ export class Circuit {
 
   /**
    * 電流箭頭（紫紅，方向 = (x1,y1)→(x2,y2)）。
-   * label 預設放在箭頭中點上方 22px（配「箭頭畫在導線下方/旁邊」的慣例），
-   * 用 opts.labelOffset:[dx,dy] 或 opts.noLabel 調整。
+   * label 預設放在箭頭中點上方 22px。慣例（2026-11 起，見 SKILL.md）：箭頭畫在導線上、
+   * 以顏色（紫紅）突顯，不要把箭頭偏移到導線下方/旁邊（會擠壓電壓極性標記）；僅當
+   * 該支路無導線段可畫時才旁置，用 opts.labelOffset 或 opts.noLabel 調整。
    */
   current(a, b, c, d, e, f) {
     let x1, y1, x2, y2, label, o;
@@ -430,7 +444,9 @@ export class Circuit {
    *   預設近水平段 above、近垂直段 left；斜線段依實際法線方向）
    * opts.flip: 反轉符號極性/方向（cell、vsource）
    * meter 需 opts.ch（'G'|'V'|'A'|'N'），可 opts.color（語義色用 SPEC.semantic）
-   * rheostat 可 opts.slider: 'left'|'right'
+   * rheostat（一上一下接法，僅水平）：段一端 = 電阻體進線端點、另一端 = 滑片引線落點；
+   *   opts.lead: 'right'（預設）| 'left' 引線落點側；opts.far: 'dangle'（預設）| 'wire' 遠端懸空/接通。
+   *   觸點箭頭自上方觸框頂；段長需 ≥ SPEC.rheostat.minLen。四式規則見 SKILL.md。
    */
   part(type, a, b, c, d, e) {
     let x1, y1, x2, y2, o;
@@ -440,11 +456,40 @@ export class Circuit {
     if (!sym) throw new Error(`未知符號 "${type}"，可用：${Object.keys(SYMBOLS).join(', ')}`);
     const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
     const span = sym.span();
-    if (len < span + 4) throw new Error(`導線段長 ${len} 不足以放下 ${type}（span ${span}）`);
-    this.partSegs.push([x1, y1, x2, y2, type]);
     const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
     const ux = dx / len, uy = dy / len;
     const half = span / 2;
+
+    if (type === 'rheostat') {
+      // 變阻器特例：符號自畫進線／引線／可選遠端短軌，不做自動引線；leadPts = 段兩端
+      if (Math.abs(dy) > 1e-9) throw new Error('變阻器僅支援水平放置（觸點向上）；垂直原圖請手排');
+      if (len < SPEC.rheostat.minLen) throw new Error(`變阻器段長 ${len} 不足（需 ≥ ${SPEC.rheostat.minLen}：體 48 ＋引線跨距 ${SPEC.rheostat.minLen - 48}）`);
+      this.partSegs.push([x1, y1, x2, y2, type]);
+      this.leadPts.add(`${x1},${y1}`);
+      this.leadPts.add(`${x2},${y2}`);
+      const xL = Math.min(x1, x2), xR = Math.max(x1, x2);
+      this.reg(xL, cy - SPEC.rheostat.leadUp, 1);
+      this.reg(xR, cy - SPEC.rheostat.leadUp, 1);
+      this.reg(xL, cy + SPEC.rheostat.bodyH / 2 + SPEC.wire.width, 1);
+      this.reg(xR, cy + SPEC.rheostat.bodyH / 2 + SPEC.wire.width, 1);
+      const g = [], abs = [];
+      const ctx = { useDef: id => this.useDef(id) };
+      sym.draw(g, abs, { ...o, cx, cy, ang: 0, segLen: len }, ctx);
+      this.el.push(`<g transform="translate(${cx},${cy})">${g.join('')}</g>`);
+      this.el.push(...abs);
+      if (o.label) {
+        // 標註錨定電阻體中心（預設 below：上方是引線）
+        const s = o.lead === 'left' ? -1 : 1;
+        const bx = cx - s * ux * (len / 2 - half);
+        const gap = o.labelGap ?? 10;
+        const ly = cy + SPEC.rheostat.bodyH / 2 + gap + SPEC.text.size;
+        this.text(+bx.toFixed(1), +ly.toFixed(1), o.label, { anchor: 'middle', color: o.labelColor });
+      }
+      return this;
+    }
+
+    if (len < span + 4) throw new Error(`導線段長 ${len} 不足以放下 ${type}（span ${span}）`);
+    this.partSegs.push([x1, y1, x2, y2, type]);
     this.leadPts.add(`${cx - ux * half},${cy - uy * half}`);
     this.leadPts.add(`${cx + ux * half},${cy + uy * half}`);
 

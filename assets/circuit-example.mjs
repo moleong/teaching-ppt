@@ -37,7 +37,10 @@ export default ({ Circuit }) => {
     c.part('resistor', 140, 40, 240, 40, { label: '{i:R}' });
     const br = c.branch(140, 40, 240, 40, -60);        // 向下繞的並聯支路
     c.part('capacitor', br[0], br[1], br[2], br[3], { label: '{i:C}', labelSide: 'below' });
-    c.part('rheostat', 40, 240, 340, 240, { label: '{i:R}{sub:P}', labelSide: 'below' });
+    // 一上一下：段 = 體進線端(120) → 引線落點(240)，兩側補導軌
+    c.wire(40, 240, 120, 240);
+    c.part('rheostat', 120, 240, 240, 240, { label: '{i:R}{sub:P}', labelSide: 'below' });
+    c.wire(240, 240, 340, 240);
     c.wire(40, 40, 140, 40); c.wire(240, 40, 340, 40);
     c.wire(340, 40, 340, 240);
     out.push('<h3>③ 變阻器限流 + 並聯電容</h3>' + c.svg());
